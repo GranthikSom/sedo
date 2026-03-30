@@ -1,9 +1,16 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart'
+    show MultiProvider, ChangeNotifierProvider, Provider;
 import 'package:sedo/pages/first.dart';
+import 'package:sedo/themes/theme_provider.dart' show ThemeProvider;
 
 void main() {
-  runApp(const MyApp());
+  runApp(
+    MultiProvider(
+      providers: [ChangeNotifierProvider(create: (context) => ThemeProvider())],
+      child: const MyApp(),
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {
@@ -11,6 +18,10 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(debugShowCheckedModeBanner: false, home: firstpage());
+    return MaterialApp(
+      debugShowCheckedModeBanner: false,
+      home: firstpage(),
+      theme: Provider.of<ThemeProvider>(context).themeDate,
+    );
   }
 }

@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:sedo/models/drawer.dart' show MyDrawer;
+import 'package:sedo/models/drawer_page.dart';
 
 class firstpage extends StatelessWidget {
   const firstpage({super.key});
@@ -6,7 +8,9 @@ class firstpage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Center(child: Text('First Page', style: TextStyle(fontSize: 24))),
+      drawer: DrawerPage(),
+      appBar: AppBar(title: const Text('')),
+      body: Center(child: Text('S E D O', style: TextStyle(fontSize: 24))),
     );
   }
 }
