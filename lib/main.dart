@@ -1,13 +1,16 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:sedo/pages/first.dart';
 
 void main() {
-  WidgetsFlutterBinding.ensureInitialized();
+  runApp(const MyApp());
+}
 
-  SystemChrome.setPreferredOrientations([
-    DeviceOrientation.landscapeRight, // or landscapeLeft / landscapeRight
-  ]).then((_) {
-    runApp(MaterialApp(debugShowCheckedModeBanner: false, home: firstpage()));
-  });
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(debugShowCheckedModeBanner: false, home: firstpage());
+  }
 }
