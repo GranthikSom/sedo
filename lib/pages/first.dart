@@ -1,16 +1,61 @@
 import 'package:flutter/material.dart';
-import 'package:sedo/models/drawer.dart' show MyDrawer;
+import 'package:sedo/models/box.dart';
+//import 'package:sedo/models/drawer.dart' show MyDrawer;
 import 'package:sedo/models/drawer_page.dart';
+import 'package:sedo/pages/map_page.dart';
+import 'package:sedo/pages/speedometer.dart';
 
-class firstpage extends StatelessWidget {
+import 'musicplayer_page.dart' show MusicplayerPage;
+
+class firstpage extends StatefulWidget {
   const firstpage({super.key});
+
+  @override
+  State<firstpage> createState() => _firstpageState();
+}
+
+class _firstpageState extends State<firstpage> {
+  int currentIndex = 0;
+
+  void changePage(int index) {
+    setState(() {
+      currentIndex = index;
+    });
+  }
+
+  final List<Widget> pages = [SpeedometerPage(), MusicplayerPage()];
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      drawer: DrawerPage(),
-      appBar: AppBar(title: const Text('')),
-      body: Center(child: Text('S E D O', style: TextStyle(fontSize: 24))),
+      drawer: DrawerPage(onItemTap: changePage),
+
+      body: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        children: [
+          Expanded(
+            child: Box(
+              child: Center(
+                child: SizedBox(width: 450, height: 430, child: MapPage()),
+              ),
+            ),
+          ),
+          Expanded(
+            child: Box(
+              child: Center(
+                child: SizedBox(
+                  width: 200,
+                  height: 200,
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(100),
+                    child: IndexedStack(index: currentIndex, children: pages),
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
     );
   }
 }

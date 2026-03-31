@@ -4,6 +4,9 @@ import 'package:provider/provider.dart'
 import 'package:sedo/pages/first.dart';
 import 'package:sedo/themes/theme_provider.dart' show ThemeProvider;
 
+import 'pages/map_page.dart' show MapPage;
+import 'pages/musicplayer_page.dart' show MusicplayerPage;
+
 void main() {
   runApp(
     MultiProvider(
@@ -13,9 +16,14 @@ void main() {
   );
 }
 
-class MyApp extends StatelessWidget {
+class MyApp extends StatefulWidget {
   const MyApp({super.key});
 
+  @override
+  State<MyApp> createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
