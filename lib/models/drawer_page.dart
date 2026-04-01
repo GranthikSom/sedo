@@ -20,17 +20,14 @@ class DrawerPage extends StatelessWidget {
               children: [
                 GestureDetector(
                   onTap: () {
+                    onItemTap(2);
                     Navigator.pop(context);
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => firstpage()),
-                    );
                   },
                   child: Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: Box(
                       child: Icon(
-                        Icons.home,
+                        Icons.map,
                         size: 60,
                         color: Theme.of(context).colorScheme.tertiary,
                       ),

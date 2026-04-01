@@ -3,6 +3,7 @@ import 'package:sedo/models/box.dart';
 //import 'package:sedo/models/drawer.dart' show MyDrawer;
 import 'package:sedo/models/drawer_page.dart';
 import 'package:sedo/pages/map_page.dart';
+import 'package:sedo/pages/map_settings.dart';
 import 'package:sedo/pages/speedometer.dart';
 
 import 'musicplayer_page.dart' show MusicplayerPage;
@@ -23,7 +24,11 @@ class _firstpageState extends State<firstpage> {
     });
   }
 
-  final List<Widget> pages = [SpeedometerPage(), MusicplayerPage()];
+  final List<Widget> pages = [
+    SpeedometerPage(),
+    MusicplayerPage(),
+    MapSettings(),
+  ];
 
   @override
   Widget build(BuildContext context) {
@@ -44,10 +49,9 @@ class _firstpageState extends State<firstpage> {
             child: Box(
               child: Center(
                 child: SizedBox(
-                  width: 200,
-                  height: 200,
+                  width: 450,
+                  height: 450,
                   child: ClipRRect(
-                    borderRadius: BorderRadius.circular(100),
                     child: IndexedStack(index: currentIndex, children: pages),
                   ),
                 ),
