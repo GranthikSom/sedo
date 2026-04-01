@@ -20,7 +20,7 @@ class DrawerPage extends StatelessWidget {
               children: [
                 GestureDetector(
                   onTap: () {
-                    onItemTap(2);
+                    onItemTap(0);
                     Navigator.pop(context);
                   },
                   child: Padding(
@@ -36,7 +36,7 @@ class DrawerPage extends StatelessWidget {
                 ),
                 GestureDetector(
                   onTap: () {
-                    onItemTap(1);
+                    onItemTap(2);
                     Navigator.pop(context);
                   },
                   child: Padding(
@@ -59,7 +59,7 @@ class DrawerPage extends StatelessWidget {
               children: [
                 GestureDetector(
                   onTap: () {
-                    onItemTap(0);
+                    onItemTap(1);
                     Navigator.pop(context);
                   },
                   child: Padding(

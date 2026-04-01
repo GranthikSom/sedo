@@ -25,9 +25,9 @@ class _firstpageState extends State<firstpage> {
   }
 
   final List<Widget> pages = [
+    MapSettings(),
     SpeedometerPage(),
     MusicplayerPage(),
-    MapSettings(),
   ];
 
   @override
