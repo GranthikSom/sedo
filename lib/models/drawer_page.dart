@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:sedo/models/box.dart' show Box;
 import 'package:sedo/pages/first.dart';
+import 'package:sedo/pages/picture.dart';
 import 'package:sedo/pages/settings.dart';
 
 class DrawerPage extends StatelessWidget {
@@ -104,14 +105,16 @@ class DrawerPage extends StatelessWidget {
                     Navigator.pop(context);
                     Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (context) => firstpage()),
+                      MaterialPageRoute(
+                        builder: (context) => ImageGalleryPage(),
+                      ),
                     );
                   },
                   child: Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: Box(
                       child: Icon(
-                        Icons.home,
+                        Icons.document_scanner,
                         size: 60,
                         color: Theme.of(context).colorScheme.tertiary,
                       ),

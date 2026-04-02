@@ -1,15 +1,264 @@
-import 'package:flutter/material.dart';
+import 'dart:ui';
 
-class MusicplayerPage extends StatelessWidget {
+import 'package:flutter/material.dart';
+import 'package:provider/provider.dart' show Consumer, Provider;
+import 'package:sedo/models/ball.dart' show Ball;
+
+import '../models/box.dart' show Box;
+import '../service/playlist_provider.dart' show PlaylistProvider;
+
+class MusicplayerPage extends StatefulWidget {
   const MusicplayerPage({super.key});
 
   @override
+  State<MusicplayerPage> createState() => _MusicplayerPageState();
+}
+
+class _MusicplayerPageState extends State<MusicplayerPage> {
+  @override
+  void initState() {
+    super.initState();
+
+    // Delay to ensure context is available
+    Future.microtask(() {
+      final provider = Provider.of<PlaylistProvider>(context, listen: false);
+
+      if (!provider.isPlaying) {
+        provider.play(); // or provider.playCurrentSong()
+      }
+    });
+  }
+
+  String formatTime(Duration duration) {
+    String twoDigitSeconds = duration.inSeconds
+        .remainder(60)
+        .toString()
+        .padLeft(2, '0');
+    String formattedTime = "${duration.inMinutes}:$twoDigitSeconds";
+
+    return formattedTime;
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return const Center(
-      child: Text(
-        'M U S I C   P L A Y E R',
-        style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-      ),
+    return Consumer<PlaylistProvider>(
+      builder: (context, value, child) {
+        // playlist data
+        final playlist = value.playlists;
+        //song index
+        final songIndex = playlist[value.currentSongIndex ?? 0];
+        //ui return
+        return Scaffold(
+          body: Stack(
+            fit: StackFit.expand,
+            children: [
+              // Background Image
+              Image(image: AssetImage(songIndex.album), fit: BoxFit.cover),
+
+              // Blur Layer
+              BackdropFilter(
+                filter: ImageFilter.blur(sigmaX: 20, sigmaY: 20),
+                child: Container(
+                  color: Theme.of(
+                    context,
+                  ).colorScheme.surface.withOpacity(0.05), // dark overlay
+                ),
+              ),
+
+              SafeArea(
+                child: Padding(
+                  padding: const EdgeInsets.only(
+                    left: 25,
+                    right: 25,
+                    bottom: 25,
+                    top: 5,
+                  ),
+
+                  child: Column(
+                    children: [
+                      Padding(
+                        padding: EdgeInsets.only(top: 8.0),
+                        child: SizedBox(
+                          height: 30,
+                          child: Text(
+                            songIndex.quote,
+
+                            style: TextStyle(
+                              fontSize: 12,
+                              fontWeight: FontWeight.bold,
+                              fontStyle: FontStyle.italic,
+                              color: Theme.of(context).colorScheme.secondary,
+                            ),
+                          ),
+                        ),
+                      ),
+
+                      //album artwork
+                      Box(
+                        child: Column(
+                          children: [
+                            ClipRRect(
+                              borderRadius: BorderRadius.circular(10),
+                              child: Image(image: AssetImage(songIndex.album)),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Column(
+                                    mainAxisAlignment: MainAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        songIndex.title,
+                                        style: TextStyle(
+                                          fontSize: 20,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                      Text(songIndex.artist),
+                                    ],
+                                  ),
+
+                                  //like button
+                                  Icon(
+                                    Icons.favorite_border,
+                                    color: Colors.white,
+                                  ), // HAVE TO FIX THE LIKE OPTION LATER !!!!!!!!!!!!!!
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(height: 30),
+
+                      //song duration slider
+                      Column(
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 20.0,
+                            ),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(
+                                  formatTime(value.currentDuration),
+                                  style: TextStyle(
+                                    fontSize: 12,
+                                    color: Theme.of(
+                                      context,
+                                    ).colorScheme.secondary,
+                                  ),
+                                ),
+
+                                //Icon(Icons.shuffle),
+
+                                //Icon(Icons.repeat),
+                                Text(
+                                  formatTime(value.totalDuration),
+                                  style: TextStyle(
+                                    fontSize: 12,
+                                    color: Theme.of(
+                                      context,
+                                    ).colorScheme.secondary,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          SliderTheme(
+                            data: SliderTheme.of(context).copyWith(
+                              thumbShape: const RoundSliderThumbShape(
+                                enabledThumbRadius: 0,
+                              ),
+                            ),
+                            child: Slider(
+                              value: value.currentDuration.inSeconds.toDouble(),
+                              min: 0,
+                              max: value.totalDuration.inSeconds.toDouble(),
+                              activeColor: Colors.green,
+                              onChanged: (double double) {},
+                              onChangeEnd: (double double) {
+                                value.seek(Duration(seconds: double.toInt()));
+                              },
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 30),
+
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: [
+                          Ball(
+                            child: Expanded(
+                              child: GestureDetector(
+                                onTap: value.playPrevious,
+                                child: CircleAvatar(
+                                  foregroundColor: Theme.of(
+                                    context,
+                                  ).colorScheme.inversePrimary,
+                                  backgroundColor: Theme.of(
+                                    context,
+                                  ).colorScheme.primary,
+                                  child: Icon(Icons.skip_previous),
+                                ),
+                              ),
+                            ),
+                          ),
+                          const SizedBox(width: 10),
+                          Ball(
+                            child: Expanded(
+                              flex: 2,
+                              child: GestureDetector(
+                                onTap: value.pauseOrResume,
+                                child: CircleAvatar(
+                                  foregroundColor: Theme.of(
+                                    context,
+                                  ).colorScheme.inversePrimary,
+                                  backgroundColor: Theme.of(
+                                    context,
+                                  ).colorScheme.primary,
+                                  radius: 34,
+                                  child: Icon(
+                                    value.isPlaying
+                                        ? Icons.pause
+                                        : Icons.play_arrow,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                          const SizedBox(width: 10),
+                          Ball(
+                            child: Expanded(
+                              child: GestureDetector(
+                                onTap: value.playNext,
+                                child: CircleAvatar(
+                                  foregroundColor: Theme.of(
+                                    context,
+                                  ).colorScheme.inversePrimary,
+                                  backgroundColor: Theme.of(
+                                    context,
+                                  ).colorScheme.primary,
+                                  child: Icon(Icons.skip_next),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ],
+          ),
+        );
+      },
     );
   }
 }
