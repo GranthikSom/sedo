@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:sedo/models/drawer_page.dart';
 
 class ImageGalleryPage extends StatefulWidget {
   @override
@@ -85,7 +86,8 @@ class _ImageGalleryPageState extends State<ImageGalleryPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('My Gallery')),
+      drawer: DrawerPage(onItemTap: (index) {}),
+
       body: _images.isEmpty
           ? Center(child: Text('No images found'))
           : GridView.builder(

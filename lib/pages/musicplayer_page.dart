@@ -57,7 +57,7 @@ class _MusicplayerPageState extends State<MusicplayerPage> {
 
               // Blur Layer
               BackdropFilter(
-                filter: ImageFilter.blur(sigmaX: 20, sigmaY: 20),
+                filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
                 child: Container(
                   color: Theme.of(
                     context,
@@ -68,71 +68,63 @@ class _MusicplayerPageState extends State<MusicplayerPage> {
               SafeArea(
                 child: Padding(
                   padding: const EdgeInsets.only(
-                    left: 25,
-                    right: 25,
-                    bottom: 25,
-                    top: 5,
+                    left: 40,
+                    right: 40,
+                    bottom: 40,
+                    top: 70,
                   ),
 
                   child: Column(
                     children: [
-                      Padding(
-                        padding: EdgeInsets.only(top: 8.0),
-                        child: SizedBox(
-                          height: 30,
-                          child: Text(
-                            songIndex.quote,
+                      Opacity(
+                        opacity: 0.2,
+                        child: Box(
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            children: [
+                              Text(
+                                songIndex.title,
+                                style: TextStyle(
+                                  fontSize: 40,
+                                  fontWeight: FontWeight.w900,
+                                  color: Theme.of(
+                                    context,
+                                  ).colorScheme.inversePrimary,
+                                  shadows: [
+                                    Shadow(
+                                      blurRadius: 20.0,
+                                      color: Theme.of(
+                                        context,
+                                      ).colorScheme.primary,
+                                      offset: Offset(0, 0),
+                                    ),
+                                  ],
+                                ),
+                              ),
 
-                            style: TextStyle(
-                              fontSize: 12,
-                              fontWeight: FontWeight.bold,
-                              fontStyle: FontStyle.italic,
-                              color: Theme.of(context).colorScheme.secondary,
-                            ),
+                              Text(
+                                songIndex.artist,
+                                style: TextStyle(
+                                  fontSize: 20,
+                                  color: Theme.of(
+                                    context,
+                                  ).colorScheme.inversePrimary,
+                                  shadows: [
+                                    Shadow(
+                                      blurRadius: 20.0,
+                                      color: Theme.of(
+                                        context,
+                                      ).colorScheme.primary,
+                                      offset: Offset(0, 0),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ],
                           ),
                         ),
                       ),
-
-                      //album artwork
-                      Box(
-                        child: Column(
-                          children: [
-                            ClipRRect(
-                              borderRadius: BorderRadius.circular(10),
-                              child: Image(image: AssetImage(songIndex.album)),
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Column(
-                                    mainAxisAlignment: MainAxisAlignment.start,
-                                    children: [
-                                      Text(
-                                        songIndex.title,
-                                        style: TextStyle(
-                                          fontSize: 20,
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                      ),
-                                      Text(songIndex.artist),
-                                    ],
-                                  ),
-
-                                  //like button
-                                  Icon(
-                                    Icons.favorite_border,
-                                    color: Colors.white,
-                                  ), // HAVE TO FIX THE LIKE OPTION LATER !!!!!!!!!!!!!!
-                                ],
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      const SizedBox(height: 30),
+                      const SizedBox(height: 20),
 
                       //song duration slider
                       Column(
@@ -188,7 +180,7 @@ class _MusicplayerPageState extends State<MusicplayerPage> {
                           ),
                         ],
                       ),
-                      const SizedBox(height: 30),
+                      const SizedBox(height: 20),
 
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -198,6 +190,7 @@ class _MusicplayerPageState extends State<MusicplayerPage> {
                               child: GestureDetector(
                                 onTap: value.playPrevious,
                                 child: CircleAvatar(
+                                  radius: 30,
                                   foregroundColor: Theme.of(
                                     context,
                                   ).colorScheme.inversePrimary,
@@ -209,7 +202,7 @@ class _MusicplayerPageState extends State<MusicplayerPage> {
                               ),
                             ),
                           ),
-                          const SizedBox(width: 10),
+                          const SizedBox(width: 1),
                           Ball(
                             child: Expanded(
                               flex: 2,
@@ -232,12 +225,13 @@ class _MusicplayerPageState extends State<MusicplayerPage> {
                               ),
                             ),
                           ),
-                          const SizedBox(width: 10),
+                          const SizedBox(width: 1),
                           Ball(
                             child: Expanded(
                               child: GestureDetector(
                                 onTap: value.playNext,
                                 child: CircleAvatar(
+                                  radius: 30,
                                   foregroundColor: Theme.of(
                                     context,
                                   ).colorScheme.inversePrimary,
