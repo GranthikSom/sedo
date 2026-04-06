@@ -2,10 +2,12 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:sedo/models/box.dart';
 import 'package:sedo/models/drawer_page.dart';
 
 class ImageGalleryPage extends StatefulWidget {
   @override
+  // ignore: library_private_types_in_public_api
   _ImageGalleryPageState createState() => _ImageGalleryPageState();
 }
 
@@ -91,27 +93,33 @@ class _ImageGalleryPageState extends State<ImageGalleryPage> {
       body: _images.isEmpty
           ? Center(child: Text('No images found'))
           : GridView.builder(
-              padding: EdgeInsets.all(8),
+              padding: EdgeInsets.all(20),
               gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 3,
-                crossAxisSpacing: 8,
+                crossAxisCount: 4,
+                crossAxisSpacing: 20,
                 mainAxisSpacing: 8,
               ),
               itemCount: _images.length,
               itemBuilder: (context, index) {
-                return GestureDetector(
-                  onTap: () => _openFullScreen(_images[index]),
-                  onLongPress: () => _showDeleteDialog(index),
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.circular(8),
-                    child: Image.file(_images[index], fit: BoxFit.cover),
+                return Box(
+                  child: GestureDetector(
+                    onTap: () => _openFullScreen(_images[index]),
+                    onLongPress: () => _showDeleteDialog(index),
+
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(20),
+                      child: Image.file(_images[index], fit: BoxFit.cover),
+                    ),
                   ),
                 );
               },
             ),
       floatingActionButton: FloatingActionButton(
         onPressed: _pickImage,
-        child: Icon(Icons.add),
+        child: Icon(
+          Icons.add,
+          color: Theme.of(context).colorScheme.inversePrimary,
+        ),
       ),
     );
   }
@@ -125,9 +133,22 @@ class FullScreenImagePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.black,
-      appBar: AppBar(backgroundColor: Colors.black),
-      body: Center(child: InteractiveViewer(child: Image.file(image))),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          Navigator.pop(context);
+        },
+        child: Icon(
+          Icons.back_hand,
+          color: Theme.of(context).colorScheme.inversePrimary,
+        ),
+      ),
+
+      floatingActionButtonLocation: FloatingActionButtonLocation.startTop,
+      body: Box(
+        child: ListView(
+          children: [InteractiveViewer(child: Image.file(image))],
+        ),
+      ),
     );
   }
 }
