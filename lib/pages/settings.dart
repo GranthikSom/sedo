@@ -1,5 +1,7 @@
+// ignore_for_file: deprecated_member_use
+
 import 'package:flutter/material.dart';
-import 'package:sedo/models/drawer_page.dart';
+import 'package:sedo/pages/drawer_secondary.dart' show DrawerSecondary;
 import 'package:sedo/themes/theme_provider.dart' show ThemeProvider;
 import 'package:provider/provider.dart';
 
@@ -9,7 +11,7 @@ class SettingsPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      drawer: DrawerPage(onItemTap: (index) {}),
+      drawer: DrawerSecondary(),
       appBar: AppBar(title: Text('S E T T I N G S')),
       body: ListView(
         padding: EdgeInsets.zero,

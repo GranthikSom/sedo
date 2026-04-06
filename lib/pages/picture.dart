@@ -1,9 +1,11 @@
+// ignore_for_file: depend_on_referenced_packages, use_key_in_widget_constructors
+
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:sedo/models/box.dart';
-import 'package:sedo/models/drawer_page.dart';
+import 'package:sedo/pages/drawer_secondary.dart';
 
 class ImageGalleryPage extends StatefulWidget {
   @override
@@ -88,7 +90,7 @@ class _ImageGalleryPageState extends State<ImageGalleryPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      drawer: DrawerPage(onItemTap: (index) {}),
+      drawer: DrawerSecondary(),
 
       body: _images.isEmpty
           ? Center(child: Text('No images found'))

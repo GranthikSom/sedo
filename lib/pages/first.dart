@@ -1,3 +1,5 @@
+// ignore_for_file: camel_case_types
+
 import 'package:flutter/material.dart';
 import 'package:sedo/models/box.dart';
 //import 'package:sedo/models/drawer.dart' show MyDrawer;

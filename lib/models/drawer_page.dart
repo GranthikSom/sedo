@@ -1,3 +1,5 @@
+// ignore_for_file: deprecated_member_use
+
 import 'package:flutter/material.dart';
 import 'package:sedo/models/box.dart' show Box;
 import 'package:sedo/pages/first.dart';
