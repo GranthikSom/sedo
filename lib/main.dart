@@ -3,6 +3,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart'
     show MultiProvider, ChangeNotifierProvider, Provider;
+import 'package:sedo/pages/auth.dart' show Auth;
 import 'package:sedo/pages/first.dart';
 import 'package:sedo/service/playlist_provider.dart' show PlaylistProvider;
 import 'package:sedo/themes/theme_provider.dart' show ThemeProvider;
@@ -34,7 +35,7 @@ class _MyAppState extends State<MyApp> {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: firstpage(),
+      home: const Auth(),
       theme: Provider.of<ThemeProvider>(context).themeDate,
     );
   }
