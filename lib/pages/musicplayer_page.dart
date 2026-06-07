@@ -73,7 +73,7 @@ class _MusicplayerPageState extends State<MusicplayerPage> {
                     left: 40,
                     right: 40,
                     bottom: 40,
-                    top: 70,
+                    top: 10,
                   ),
 
                   child: Column(
@@ -87,7 +87,7 @@ class _MusicplayerPageState extends State<MusicplayerPage> {
                               Text(
                                 songIndex.title,
                                 style: TextStyle(
-                                  fontSize: 40,
+                                  fontSize: 20,
                                   fontWeight: FontWeight.w900,
                                   color: Theme.of(
                                     context,
@@ -126,7 +126,7 @@ class _MusicplayerPageState extends State<MusicplayerPage> {
                           ),
                         ),
                       ),
-                      const SizedBox(height: 20),
+                      const SizedBox(height: 10),
 
                       //song duration slider
                       Column(
@@ -182,7 +182,7 @@ class _MusicplayerPageState extends State<MusicplayerPage> {
                           ),
                         ],
                       ),
-                      const SizedBox(height: 20),
+                      const SizedBox(height: 10),
 
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -204,7 +204,7 @@ class _MusicplayerPageState extends State<MusicplayerPage> {
                               ),
                             ),
                           ),
-                          const SizedBox(width: 1),
+
                           Ball(
                             child: Expanded(
                               flex: 2,

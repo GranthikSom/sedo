@@ -20,14 +20,9 @@ class _MapSettingsState extends State<MapSettings> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.secondary.withOpacity(0.6),
-      appBar: AppBar(
-        automaticallyImplyLeading: false,
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-        title: const Text('MAP CONTROLS'),
-        centerTitle: true,
-      ),
+
       body: Column(
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
           Expanded(
             child: Row(

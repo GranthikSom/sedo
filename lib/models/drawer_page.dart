@@ -126,7 +126,7 @@ class DrawerPage extends StatelessWidget {
                 GestureDetector(
                   onTap: () {
                     Navigator.pop(context);
-                    Navigator.push(
+                    Navigator.pushReplacement(
                       context,
                       MaterialPageRoute(builder: (context) => SettingsPage()),
                     );

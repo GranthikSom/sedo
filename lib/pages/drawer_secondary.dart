@@ -11,22 +11,23 @@ class DrawerSecondary extends StatelessWidget {
   Widget build(BuildContext context) {
     return Drawer(
       backgroundColor: Theme.of(context).colorScheme.secondary.withOpacity(0.6),
-      child: Container(
-        child: GestureDetector(
-          onTap: () {
-            Navigator.pop(context);
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => firstpage()),
-            );
-          },
+      child: GestureDetector(
+        onTap: () {
+          Navigator.pop(context);
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (context) => firstpage()),
+          );
+        },
+        child: Container(
+          decoration: BoxDecoration(color: Colors.transparent),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Text(
-                'Go to Dashboard',
+                'DASHBOARD',
                 style: TextStyle(
-                  fontSize: 18,
+                  fontSize: 24,
                   color: Theme.of(context).colorScheme.inversePrimary,
                 ),
               ),

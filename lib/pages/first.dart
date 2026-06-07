@@ -41,12 +41,11 @@ class _firstpageState extends State<firstpage> {
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
           Expanded(
-            child: Box(
-              child: Center(
-                child: SizedBox(width: 450, height: 430, child: MapPage()),
-              ),
+            child: Center(
+              child: SizedBox(width: 450, height: 430, child: MapPage()),
             ),
           ),
+
           Expanded(
             child: Box(
               child: Center(
