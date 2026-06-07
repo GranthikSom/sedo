@@ -46,3 +46,5 @@ app.*.map.json
 **/android/app/src/main/AndroidManifest.xml
 **/android/app/src/debug/AndroidManifest.xml
 **/android/app/src/profile/AndroidManifest.xml
+**/sedo/ios
+**/sedo/android
