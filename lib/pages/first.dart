@@ -42,7 +42,22 @@ class _firstpageState extends State<firstpage> {
         children: [
           Expanded(
             child: Center(
-              child: SizedBox(width: 450, height: 430, child: MapPage()),
+              child: Expanded(
+                child: Container(
+                  decoration: BoxDecoration(
+                    boxShadow: [
+                      BoxShadow(
+                        color: Theme.of(
+                          context,
+                        ).colorScheme.tertiary.withOpacity(0.7),
+                        blurRadius: 20,
+                        offset: const Offset(1, 1),
+                      ),
+                    ],
+                  ),
+                  child: MapPage(),
+                ),
+              ),
             ),
           ),
 

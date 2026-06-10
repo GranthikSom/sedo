@@ -7,25 +7,29 @@ class Box extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.surface,
-        borderRadius: BorderRadius.circular(20),
-        boxShadow: [
-          BoxShadow(
-            color: Theme.of(context).colorScheme.secondary,
-            blurRadius: 10,
-            offset: const Offset(1, 1),
+    return Stack(
+      children: [
+        Container(
+          decoration: BoxDecoration(
+            color: Theme.of(context).colorScheme.surface.withOpacity(0.3),
+            borderRadius: BorderRadius.circular(20),
+            boxShadow: [
+              BoxShadow(
+                color: Theme.of(context).colorScheme.secondary.withOpacity(0.5),
+                blurRadius: 10,
+                offset: const Offset(1, 1),
+              ),
+              BoxShadow(
+                color: Theme.of(context).colorScheme.secondary.withOpacity(0.5),
+                blurRadius: 10,
+                offset: const Offset(1, 1),
+              ),
+            ],
           ),
-          BoxShadow(
-            color: Theme.of(context).colorScheme.secondary,
-            blurRadius: 10,
-            offset: const Offset(-1, -1),
-          ),
-        ],
-      ),
-      padding: const EdgeInsets.all(20),
-      child: child,
+          padding: const EdgeInsets.all(20),
+          child: child,
+        ),
+      ],
     );
   }
 }

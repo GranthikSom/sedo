@@ -37,7 +37,7 @@ class _MapPageState extends State<MapPage> {
 
         return Scaffold(
           body: ClipRRect(
-            borderRadius: BorderRadius.circular(20),
+            //borderRadius: BorderRadius.circular(20),
             child: FlutterMap(
               options: MapOptions(
                 initialCenter: riderLocation,
