@@ -5,6 +5,7 @@ import 'package:provider/provider.dart'
     show MultiProvider, ChangeNotifierProvider, Provider;
 import 'package:sedo/pages/auth.dart' show Auth;
 import 'package:sedo/service/gps_provider.dart' show SpeedProvider;
+import 'package:wakelock_plus/wakelock_plus.dart' show WakelockPlus;
 import 'pages/first.dart';
 
 import 'package:sedo/service/playlist_provider.dart' show PlaylistProvider;
@@ -13,7 +14,10 @@ import 'package:sedo/themes/theme_provider.dart' show ThemeProvider;
 import 'pages/map_page.dart' show MapPage;
 import 'pages/musicplayer_page.dart' show MusicplayerPage;
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  await WakelockPlus.enable();
   runApp(
     MultiProvider(
       providers: [
