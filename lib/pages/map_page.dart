@@ -36,6 +36,7 @@ class _MapPageState extends State<MapPage> {
         final riderLocation = LatLng(position.latitude, position.longitude);
 
         return Scaffold(
+          backgroundColor: Colors.black,
           body: ClipRRect(
             //borderRadius: BorderRadius.circular(20),
             child: FlutterMap(

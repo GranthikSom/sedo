@@ -41,23 +41,19 @@ class _firstpageState extends State<firstpage> {
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
           Expanded(
-            child: Center(
-              child: Expanded(
-                child: Container(
-                  decoration: BoxDecoration(
-                    boxShadow: [
-                      BoxShadow(
-                        color: Theme.of(
-                          context,
-                        ).colorScheme.tertiary.withOpacity(0.7),
-                        blurRadius: 20,
-                        offset: const Offset(1, 1),
-                      ),
-                    ],
+            child: Container(
+              decoration: BoxDecoration(
+                boxShadow: [
+                  BoxShadow(
+                    color: Theme.of(
+                      context,
+                    ).colorScheme.tertiary.withOpacity(0.7),
+                    blurRadius: 20,
+                    offset: const Offset(1, 1),
                   ),
-                  child: MapPage(),
-                ),
+                ],
               ),
+              child: MapPage(),
             ),
           ),
 
