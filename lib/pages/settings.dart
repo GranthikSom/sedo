@@ -18,32 +18,49 @@ class SettingsPage extends StatelessWidget {
         children: [
           Column(
             children: [
-              Container(
-                decoration: BoxDecoration(
-                  color: Theme.of(context).colorScheme.primary.withOpacity(0.2),
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                margin: EdgeInsets.all(20),
-                padding: EdgeInsets.all(20),
-                child: Row(
-                  children: [
-                    Text(
-                      'Dark Mode',
-                      style: TextStyle(fontWeight: FontWeight.bold),
+              Row(
+                children: [
+                  Expanded(
+                    child: Container(
+                      decoration: BoxDecoration(
+                        color: Theme.of(
+                          context,
+                        ).colorScheme.primary.withOpacity(0.2),
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      margin: EdgeInsets.all(20),
+                      padding: EdgeInsets.all(20),
+                      child: Row(
+                        children: [
+                          Text(
+                            'Dark Mode',
+                            style: TextStyle(fontWeight: FontWeight.bold),
+                          ),
+                          //switch
+                          Switch(
+                            value: Provider.of<ThemeProvider>(
+                              context,
+                              listen: false,
+                            ).isDarkMode,
+                            onChanged: (value) => Provider.of<ThemeProvider>(
+                              context,
+                              listen: false,
+                            ).toggleTheme(),
+                          ),
+                        ],
+                      ),
                     ),
-                    //switch
-                    Switch(
-                      value: Provider.of<ThemeProvider>(
-                        context,
-                        listen: false,
-                      ).isDarkMode,
-                      onChanged: (value) => Provider.of<ThemeProvider>(
-                        context,
-                        listen: false,
-                      ).toggleTheme(),
+                  ),
+
+                  Expanded(
+                    child: Container(
+                      decoration: BoxDecoration(
+                        color: Colors.red,
+                        borderRadius: BorderRadius.circular(12),
+                      ),
                     ),
-                  ],
-                ),
+                  ),
+                ],
               ),
             ],
           ),

@@ -4,7 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart'
     show MultiProvider, ChangeNotifierProvider, Provider;
 import 'package:sedo/pages/auth.dart' show Auth;
-import 'package:sedo/pages/first.dart';
+import 'package:sedo/service/gps_provider.dart' show SpeedProvider;
+import 'pages/first.dart';
+
 import 'package:sedo/service/playlist_provider.dart' show PlaylistProvider;
 import 'package:sedo/themes/theme_provider.dart' show ThemeProvider;
 
@@ -17,6 +19,7 @@ void main() {
       providers: [
         ChangeNotifierProvider(create: (context) => ThemeProvider()),
         ChangeNotifierProvider(create: (context) => PlaylistProvider()),
+        ChangeNotifierProvider(create: (_) => SpeedProvider()),
       ],
       child: const MyApp(),
     ),
