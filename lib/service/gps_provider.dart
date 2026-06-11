@@ -17,8 +17,11 @@ class SpeedProvider extends ChangeNotifier {
   double _distanceTravelled = 0;
   Position? _lastPosition;
 
-  final DateTime _rideStartTime = DateTime.now();
+  DateTime _rideStartTime = DateTime.now();
 
+  bool _isPaused = false;
+
+  // Getters
   double get speed => _speed;
 
   double get maxSpeed => _maxSpeed;
@@ -29,6 +32,8 @@ class SpeedProvider extends ChangeNotifier {
   double get distanceTravelled => _distanceTravelled;
 
   Position? get currentPosition => _currentPosition;
+
+  bool get isPaused => _isPaused;
 
   Duration get rideDuration => DateTime.now().difference(_rideStartTime);
 
@@ -68,6 +73,12 @@ class SpeedProvider extends ChangeNotifier {
         ).listen((Position position) {
           _currentPosition = position;
 
+          // Keep map updating while paused
+          if (_isPaused) {
+            notifyListeners();
+            return;
+          }
+
           double speedKmh = position.speed * 3.6;
 
           if (speedKmh < 2) {
@@ -85,7 +96,7 @@ class SpeedProvider extends ChangeNotifier {
           _totalSpeed += _speed;
           _speedSamples++;
 
-          // Distance Travelled
+          // Distance
           if (_lastPosition != null) {
             _distanceTravelled += Geolocator.distanceBetween(
               _lastPosition!.latitude,
@@ -99,6 +110,25 @@ class SpeedProvider extends ChangeNotifier {
 
           notifyListeners();
         });
+  }
+
+  void togglePause() {
+    _isPaused = !_isPaused;
+    notifyListeners();
+  }
+
+  void resetStats() {
+    _maxSpeed = 0;
+    _totalSpeed = 0;
+    _speedSamples = 0;
+
+    _distanceTravelled = 0;
+
+    _rideStartTime = DateTime.now();
+
+    _lastPosition = _currentPosition;
+
+    notifyListeners();
   }
 
   @override

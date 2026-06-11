@@ -11,33 +11,75 @@ class SpeedometerPage extends StatelessWidget {
     return Consumer<SpeedProvider>(
       builder: (context, speedProvider, child) {
         return Padding(
-          padding: const EdgeInsets.all(24),
+          padding: const EdgeInsets.all(10),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
-              // GPS STATUS
               Row(
-                mainAxisAlignment: MainAxisAlignment.end,
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Icon(Icons.gps_fixed, color: Colors.green, size: 18),
-                  const SizedBox(width: 6),
-                  Text(
-                    "GPS",
-                    style: GoogleFonts.rajdhani(
-                      color: Colors.green,
-                      fontWeight: FontWeight.bold,
-                    ),
+                  Row(
+                    children: [
+                      ElevatedButton.icon(
+                        onPressed: speedProvider.resetStats,
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.blue, // button color
+                          foregroundColor: Colors.white,
+                        ),
+                        icon: const Icon(Icons.refresh),
+                        label: const Text("RESET"),
+                      ),
+
+                      const SizedBox(width: 12),
+
+                      ElevatedButton.icon(
+                        onPressed: speedProvider.togglePause,
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.blue, // button color
+                          foregroundColor: Colors.white,
+                        ),
+                        icon: Icon(
+                          speedProvider.isPaused
+                              ? Icons.play_arrow
+                              : Icons.pause,
+                        ),
+                        label: Text(
+                          speedProvider.isPaused ? "RESUME" : "PAUSE",
+                        ),
+                      ),
+                    ],
+                  ),
+
+                  Row(
+                    children: [
+                      Icon(
+                        Icons.gps_fixed,
+                        color: speedProvider.isPaused
+                            ? Colors.orange
+                            : Colors.green,
+                        size: 18,
+                      ),
+                      const SizedBox(width: 6),
+                      Text(
+                        speedProvider.isPaused ? "PAUSED" : "GPS",
+                        style: GoogleFonts.rajdhani(
+                          color: speedProvider.isPaused
+                              ? Colors.orange
+                              : Colors.green,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ],
                   ),
                 ],
               ),
 
-              // SPEED
               Column(
                 children: [
                   Text(
                     speedProvider.speed.toStringAsFixed(0),
                     style: GoogleFonts.orbitron(
-                      fontSize: 140,
+                      fontSize: 120,
                       fontWeight: FontWeight.bold,
                       color: Theme.of(context).colorScheme.tertiary,
                     ),
@@ -54,7 +96,6 @@ class SpeedometerPage extends StatelessWidget {
                 ],
               ),
 
-              // STATS
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
@@ -62,10 +103,12 @@ class SpeedometerPage extends StatelessWidget {
                     title: "MAX",
                     value: speedProvider.maxSpeed.toStringAsFixed(0),
                   ),
+
                   _StatCard(
                     title: "AVG",
                     value: speedProvider.averageSpeed.toStringAsFixed(0),
                   ),
+
                   _StatCard(
                     title: "TIME",
                     value: speedProvider.formattedRideTime,

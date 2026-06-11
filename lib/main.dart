@@ -1,59 +1,60 @@
 // ignore_for_file: unused_import
 
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart'
-    show SystemChrome, DeviceOrientation, SystemUiMode;
-import 'package:provider/provider.dart'
-    show MultiProvider, ChangeNotifierProvider, Provider;
-import 'package:sedo/pages/auth.dart' show Auth;
-import 'package:sedo/service/gps_provider.dart' show SpeedProvider;
-import 'package:wakelock_plus/wakelock_plus.dart' show WakelockPlus;
-import 'pages/first.dart';
+import 'package:flutter/services.dart';
+import 'package:provider/provider.dart';
 
-import 'package:sedo/service/playlist_provider.dart' show PlaylistProvider;
-import 'package:sedo/themes/theme_provider.dart' show ThemeProvider;
+import 'package:sedo/pages/auth.dart';
+import 'package:sedo/service/gps_provider.dart';
+import 'package:sedo/service/playlist_provider.dart';
+import 'package:sedo/themes/theme_provider.dart';
 
-import 'pages/map_page.dart' show MapPage;
-import 'pages/musicplayer_page.dart' show MusicplayerPage;
+import 'package:wakelock_plus/wakelock_plus.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
+  // Keep screen awake
   await WakelockPlus.enable();
 
+  // Landscape only
   await SystemChrome.setPreferredOrientations([
     DeviceOrientation.landscapeLeft,
     DeviceOrientation.landscapeRight,
   ]);
 
-  //SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
   runApp(
     MultiProvider(
       providers: [
-        ChangeNotifierProvider(create: (context) => ThemeProvider()),
-        ChangeNotifierProvider(create: (context) => PlaylistProvider()),
-        ChangeNotifierProvider(create: (_) => SpeedProvider()),
-      ],
+        ChangeNotifierProvider(create: (_) => ThemeProvider()),
 
+        ChangeNotifierProvider(create: (_) => PlaylistProvider()),
+
+        ChangeNotifierProvider(
+          create: (_) {
+            final gpsProvider = SpeedProvider();
+
+            // Start GPS once for entire app
+            gpsProvider.startTracking();
+
+            return gpsProvider;
+          },
+        ),
+      ],
       child: const MyApp(),
     ),
   );
 }
 
-class MyApp extends StatefulWidget {
+class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
-  @override
-  State<MyApp> createState() => _MyAppState();
-}
-
-class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: const Auth(),
       theme: Provider.of<ThemeProvider>(context).themeDate,
+      home: const Auth(),
     );
   }
 }
