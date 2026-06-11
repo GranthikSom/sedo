@@ -1,6 +1,8 @@
 // ignore_for_file: unused_import
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart'
+    show SystemChrome, DeviceOrientation, SystemUiMode;
 import 'package:provider/provider.dart'
     show MultiProvider, ChangeNotifierProvider, Provider;
 import 'package:sedo/pages/auth.dart' show Auth;
@@ -18,6 +20,13 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   await WakelockPlus.enable();
+
+  await SystemChrome.setPreferredOrientations([
+    DeviceOrientation.landscapeLeft,
+    DeviceOrientation.landscapeRight,
+  ]);
+
+  SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
   runApp(
     MultiProvider(
       providers: [
@@ -25,6 +34,7 @@ void main() async {
         ChangeNotifierProvider(create: (context) => PlaylistProvider()),
         ChangeNotifierProvider(create: (_) => SpeedProvider()),
       ],
+
       child: const MyApp(),
     ),
   );
