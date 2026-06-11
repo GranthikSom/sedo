@@ -1,3 +1,5 @@
+import 'dart:math' as math;
+
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
@@ -12,13 +14,40 @@ class MapPage extends StatefulWidget {
 }
 
 class _MapPageState extends State<MapPage> {
-  @override
-  void initState() {
-    super.initState();
+  final MapController _mapController = MapController();
 
-    Future.microtask(() {
-      context.read<SpeedProvider>().startTracking();
-    });
+  bool _mapInitialized = false;
+
+  void _updateCamera(LatLng riderLocation, double heading) {
+    final zoom = _mapController.camera.zoom == 0
+        ? 16.0
+        : _mapController.camera.zoom;
+
+    if (!_mapInitialized) {
+      _mapController.move(riderLocation, 16);
+
+      _mapController.rotate(heading);
+
+      _mapInitialized = true;
+      return;
+    }
+
+    const Distance distance = Distance();
+
+    final meters = distance(_mapController.camera.center, riderLocation);
+
+    if (meters > 40) {
+      final latOffset = 0.0015;
+
+      final shiftedCenter = LatLng(
+        riderLocation.latitude + latOffset,
+        riderLocation.longitude,
+      );
+
+      _mapController.move(shiftedCenter, zoom);
+    }
+
+    _mapController.rotate(heading);
   }
 
   @override
@@ -28,45 +57,51 @@ class _MapPageState extends State<MapPage> {
         final position = gpsProvider.currentPosition;
 
         if (position == null) {
-          return const Scaffold(
-            body: Center(child: CircularProgressIndicator()),
-          );
+          return const Center(child: CircularProgressIndicator());
         }
 
         final riderLocation = LatLng(position.latitude, position.longitude);
 
-        return Scaffold(
-          backgroundColor: Colors.black,
-          body: ClipRRect(
-            //borderRadius: BorderRadius.circular(20),
-            child: FlutterMap(
-              options: MapOptions(
-                initialCenter: riderLocation,
-                initialZoom: 16,
-              ),
-              children: [
-                TileLayer(
-                  urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
-                  userAgentPackageName: 'com.granthiksom.sedo',
-                ),
+        final heading = position.heading.isNaN ? 0.0 : position.heading;
 
-                MarkerLayer(
-                  markers: [
-                    Marker(
-                      point: riderLocation,
-                      width: 60,
-                      height: 60,
-                      child: const Icon(
-                        Icons.navigation,
-                        size: 40,
-                        color: Colors.blue,
-                      ),
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          _updateCamera(riderLocation, heading);
+        });
+
+        return FlutterMap(
+          mapController: _mapController,
+          options: MapOptions(
+            initialCenter: riderLocation,
+            initialZoom: 16,
+            initialRotation: heading,
+            interactionOptions: const InteractionOptions(
+              flags: InteractiveFlag.all,
+            ),
+          ),
+          children: [
+            TileLayer(
+              urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+              userAgentPackageName: 'com.granthiksom.sedo',
+            ),
+
+            MarkerLayer(
+              markers: [
+                Marker(
+                  point: riderLocation,
+                  width: 70,
+                  height: 70,
+                  child: Transform.rotate(
+                    angle: heading * math.pi / 180,
+                    child: const Icon(
+                      Icons.navigation,
+                      size: 45,
+                      color: Colors.blue,
                     ),
-                  ],
+                  ),
                 ),
               ],
             ),
-          ),
+          ],
         );
       },
     );

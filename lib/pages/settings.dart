@@ -25,15 +25,16 @@ class SettingsPage extends StatelessWidget {
                       decoration: BoxDecoration(
                         color: Theme.of(
                           context,
-                        ).colorScheme.primary.withOpacity(0.2),
+                        ).colorScheme.tertiary.withOpacity(0.2),
                         borderRadius: BorderRadius.circular(12),
                       ),
                       margin: EdgeInsets.all(20),
                       padding: EdgeInsets.all(20),
                       child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Text(
-                            'Dark Mode',
+                            'light Mode',
                             style: TextStyle(fontWeight: FontWeight.bold),
                           ),
                           //switch

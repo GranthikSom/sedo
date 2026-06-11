@@ -3,13 +3,13 @@ import 'package:sedo/themes/dark_mode.dart' show darkmode;
 import 'package:sedo/themes/light_mode.dart' show lightmode;
 
 class ThemeProvider extends ChangeNotifier {
-  ThemeData _themeData = lightmode;
+  ThemeData _themeData = darkmode;
 
   ThemeData? themeData;
 
   get themeDate => _themeData;
 
-  bool get isDarkMode => _themeData == darkmode;
+  bool get isDarkMode => _themeData == lightmode;
 
   set themedata(ThemeData themedata) {
     _themeData = themedata;
