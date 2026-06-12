@@ -47,7 +47,7 @@ class _firstpageState extends State<firstpage> {
                   BoxShadow(
                     color: Theme.of(
                       context,
-                    ).colorScheme.tertiary.withOpacity(0.7),
+                    ).colorScheme.inversePrimary.withOpacity(0.7),
                     blurRadius: 20,
                     offset: const Offset(1, 1),
                   ),

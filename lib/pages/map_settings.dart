@@ -2,6 +2,8 @@
 
 import 'package:flutter/material.dart';
 import 'package:sedo/models/ball.dart';
+import 'package:sedo/pages/fullscreen_map.dart' show FullscreenMap;
+import 'package:sedo/pages/map_page.dart';
 
 // ignore: unused_import
 import '../models/box.dart' show Box;
@@ -94,7 +96,7 @@ class _MapSettingsState extends State<MapSettings> {
                     Navigator.pop(context);
                     Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (context) => firstpage()),
+                      MaterialPageRoute(builder: (context) => FullscreenMap()),
                     );
                   },
                   child: Padding(
@@ -103,7 +105,7 @@ class _MapSettingsState extends State<MapSettings> {
                       child: CircleAvatar(
                         radius: 49,
                         child: Icon(
-                          Icons.home,
+                          Icons.map,
                           size: 40,
                           color: Theme.of(context).colorScheme.tertiary,
                         ),
@@ -116,7 +118,7 @@ class _MapSettingsState extends State<MapSettings> {
                     Navigator.pop(context);
                     Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (context) => firstpage()),
+                      MaterialPageRoute(builder: (context) => MapPage()),
                     );
                   },
                   child: Padding(
@@ -125,7 +127,7 @@ class _MapSettingsState extends State<MapSettings> {
                       child: CircleAvatar(
                         radius: 49,
                         child: Icon(
-                          Icons.home,
+                          Icons.map,
                           size: 40,
                           color: Theme.of(context).colorScheme.tertiary,
                         ),

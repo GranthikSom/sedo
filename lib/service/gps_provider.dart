@@ -25,6 +25,10 @@ class SpeedProvider extends ChangeNotifier {
 
   bool _isPaused = false;
 
+  // ==========================
+  // GETTERS
+  // ==========================
+
   double get speed => _speed;
 
   double get maxSpeed => _maxSpeed;
@@ -38,6 +42,18 @@ class SpeedProvider extends ChangeNotifier {
 
   bool get isPaused => _isPaused;
 
+  double get heading {
+    if (_currentPosition == null) return 0;
+
+    final h = _currentPosition!.heading;
+
+    return h.isNaN ? 0 : h;
+  }
+
+  double get latitude => _currentPosition?.latitude ?? 0;
+
+  double get longitude => _currentPosition?.longitude ?? 0;
+
   Duration get rideDuration {
     if (_isPaused && _pauseStartedAt != null) {
       return _pauseStartedAt!.difference(_rideStartTime) - _pausedDuration;
@@ -49,11 +65,13 @@ class SpeedProvider extends ChangeNotifier {
   String get formattedRideTime {
     final d = rideDuration;
 
-    if (d.inHours > 0) {
-      return "${d.inHours}h ${d.inMinutes % 60}m";
-    }
+    final hours = d.inHours;
+    final minutes = d.inMinutes % 60;
+    final seconds = d.inSeconds % 60;
 
-    return "${d.inMinutes}m ${d.inSeconds % 60}s";
+    return "${hours.toString().padLeft(2, '0')}:"
+        "${minutes.toString().padLeft(2, '0')}:"
+        "${seconds.toString().padLeft(2, '0')}";
   }
 
   // ==========================
@@ -61,7 +79,6 @@ class SpeedProvider extends ChangeNotifier {
   // ==========================
 
   Future<void> startTracking() async {
-    // Prevent duplicate streams
     if (_positionStream != null) return;
 
     bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
@@ -78,7 +95,6 @@ class SpeedProvider extends ChangeNotifier {
       return;
     }
 
-    // UI timer for stopwatch updates
     _uiTimer ??= Timer.periodic(const Duration(seconds: 1), (_) {
       notifyListeners();
     });
@@ -92,6 +108,7 @@ class SpeedProvider extends ChangeNotifier {
         ).listen((Position position) {
           _currentPosition = position;
 
+          // Keep map updating while paused
           if (_isPaused) {
             _speed = 0;
             notifyListeners();
@@ -111,18 +128,23 @@ class SpeedProvider extends ChangeNotifier {
             _maxSpeed = _speed;
           }
 
-          // AVERAGE SPEED
+          // AVG SPEED
           _totalSpeed += _speed;
           _speedSamples++;
 
           // DISTANCE
           if (_lastPosition != null) {
-            _distanceTravelled += Geolocator.distanceBetween(
+            final distance = Geolocator.distanceBetween(
               _lastPosition!.latitude,
               _lastPosition!.longitude,
               position.latitude,
               position.longitude,
             );
+
+            // Ignore GPS jitter
+            if (distance > 1) {
+              _distanceTravelled += distance;
+            }
           }
 
           _lastPosition = position;
@@ -149,6 +171,7 @@ class SpeedProvider extends ChangeNotifier {
       // Pause
 
       _pauseStartedAt = DateTime.now();
+
       _isPaused = true;
 
       _speed = 0;
@@ -158,7 +181,7 @@ class SpeedProvider extends ChangeNotifier {
   }
 
   // ==========================
-  // RESET
+  // RESET STATS
   // ==========================
 
   void resetStats() {
