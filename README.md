@@ -7,6 +7,9 @@ Designed specifically for riders, Sedo transforms a smartphone into a motorcycle
 The project follows an **offline-first philosophy**, allowing riders to access navigation and essential riding information even in areas with limited or no network connectivity.
 
 ---
+<img src="readme_assets/test.gif" alt="Demo" width="800">
+
+
 
 # Features
 
