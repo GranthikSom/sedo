@@ -60,6 +60,10 @@ without requiring expensive hardware or continuous internet access.
 
 * iOS 13 or later
 
+## Linux
+
+* there will be support for linux in future
+
 ---
 
 # Screens
