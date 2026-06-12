@@ -5,6 +5,7 @@ import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 
 import 'package:sedo/pages/auth.dart';
+import 'package:sedo/pages/first.dart';
 import 'package:sedo/service/gps_provider.dart';
 import 'package:sedo/service/playlist_provider.dart';
 import 'package:sedo/themes/theme_provider.dart';
@@ -54,7 +55,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       theme: Provider.of<ThemeProvider>(context).themeDate,
-      home: const Auth(),
+      home: const firstpage(),
     );
   }
 }

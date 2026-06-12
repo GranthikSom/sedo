@@ -103,13 +103,13 @@ class _ImageGalleryPageState extends State<ImageGalleryPage> {
               ),
               itemCount: _images.length,
               itemBuilder: (context, index) {
-                return Box(
+                return Container(
                   child: GestureDetector(
                     onTap: () => _openFullScreen(_images[index]),
                     onLongPress: () => _showDeleteDialog(index),
 
                     child: ClipRRect(
-                      borderRadius: BorderRadius.circular(20),
+                      borderRadius: BorderRadius.circular(10),
                       child: Image.file(_images[index], fit: BoxFit.cover),
                     ),
                   ),
