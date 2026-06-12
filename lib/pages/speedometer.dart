@@ -10,112 +10,162 @@ class SpeedometerPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Consumer<SpeedProvider>(
       builder: (context, speedProvider, child) {
-        return Padding(
-          padding: const EdgeInsets.all(10),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Row(
-                    children: [
-                      ElevatedButton.icon(
-                        onPressed: speedProvider.resetStats,
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.blue, // button color
-                          foregroundColor: Colors.white,
-                        ),
-                        icon: const Icon(Icons.refresh),
-                        label: const Text("RESET"),
-                      ),
+        return SafeArea(
+          child: LayoutBuilder(
+            builder: (context, constraints) {
+              final height = constraints.maxHeight;
 
-                      const SizedBox(width: 12),
+              final speedFontSize = height * 0.28;
+              final statFontSize = height * 0.06;
 
-                      ElevatedButton.icon(
-                        onPressed: speedProvider.togglePause,
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.blue, // button color
-                          foregroundColor: Colors.white,
-                        ),
-                        icon: Icon(
-                          speedProvider.isPaused
-                              ? Icons.play_arrow
-                              : Icons.pause,
-                        ),
-                        label: Text(
-                          speedProvider.isPaused ? "RESUME" : "PAUSE",
-                        ),
-                      ),
-                    ],
-                  ),
+              return Padding(
+                padding: const EdgeInsets.symmetric(vertical: 4),
+                child: Column(
+                  children: [
+                    // TOP BAR
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Row(
+                          children: [
+                            ElevatedButton.icon(
+                              onPressed: speedProvider.resetStats,
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: Colors.blue,
+                                foregroundColor: Colors.white,
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 12,
+                                  vertical: 10,
+                                ),
+                              ),
+                              icon: const Icon(Icons.refresh, size: 18),
+                              label: const Text("RESET"),
+                            ),
 
-                  Row(
-                    children: [
-                      Icon(
-                        Icons.gps_fixed,
-                        color: speedProvider.isPaused
-                            ? Colors.orange
-                            : Colors.green,
-                        size: 18,
-                      ),
-                      const SizedBox(width: 6),
-                      Text(
-                        speedProvider.isPaused ? "PAUSED" : "GPS",
-                        style: GoogleFonts.rajdhani(
-                          color: speedProvider.isPaused
-                              ? Colors.orange
-                              : Colors.green,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
+                            const SizedBox(width: 8),
 
-              Column(
-                children: [
-                  Text(
-                    speedProvider.speed.toStringAsFixed(0),
-                    style: GoogleFonts.orbitron(
-                      fontSize: 120,
-                      fontWeight: FontWeight.bold,
-                      color: Theme.of(context).colorScheme.tertiary,
+                            ElevatedButton.icon(
+                              onPressed: speedProvider.togglePause,
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: Colors.blue,
+                                foregroundColor: Colors.white,
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 12,
+                                  vertical: 10,
+                                ),
+                              ),
+                              icon: Icon(
+                                speedProvider.isPaused
+                                    ? Icons.play_arrow
+                                    : Icons.pause,
+                                size: 18,
+                              ),
+                              label: Text(
+                                speedProvider.isPaused ? "RESUME" : "PAUSE",
+                              ),
+                            ),
+                          ],
+                        ),
+
+                        Row(
+                          children: [
+                            Icon(
+                              Icons.gps_fixed,
+                              color: speedProvider.isPaused
+                                  ? Colors.orange
+                                  : Colors.green,
+                              size: 18,
+                            ),
+                            const SizedBox(width: 6),
+                            Text(
+                              speedProvider.isPaused ? "PAUSED" : "GPS",
+                              style: GoogleFonts.rajdhani(
+                                color: speedProvider.isPaused
+                                    ? Colors.orange
+                                    : Colors.green,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
                     ),
-                  ),
 
-                  Text(
-                    "KM/H",
-                    style: GoogleFonts.rajdhani(
-                      fontSize: 24,
-                      letterSpacing: 5,
-                      color: Theme.of(context).colorScheme.tertiary,
+                    const Spacer(),
+
+                    // SPEED
+                    Column(
+                      children: [
+                        FittedBox(
+                          fit: BoxFit.scaleDown,
+                          child: Text(
+                            speedProvider.speed.toStringAsFixed(0),
+                            style: GoogleFonts.orbitron(
+                              fontSize: speedFontSize,
+                              fontWeight: FontWeight.bold,
+                              color: Theme.of(context).colorScheme.tertiary,
+                            ),
+                          ),
+                        ),
+
+                        Text(
+                          "KM/H",
+                          style: GoogleFonts.rajdhani(
+                            fontSize: 22,
+                            letterSpacing: 4,
+                            color: Theme.of(context).colorScheme.tertiary,
+                          ),
+                        ),
+                      ],
                     ),
-                  ),
-                ],
-              ),
 
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  _StatCard(
-                    title: "MAX",
-                    value: speedProvider.maxSpeed.toStringAsFixed(0),
-                  ),
+                    const Spacer(),
 
-                  _StatCard(
-                    title: "AVG",
-                    value: speedProvider.averageSpeed.toStringAsFixed(0),
-                  ),
+                    // STATS
+                    Row(
+                      children: [
+                        Expanded(
+                          child: _StatCard(
+                            title: "MAX",
+                            value: speedProvider.maxSpeed.toStringAsFixed(0),
+                            fontSize: statFontSize,
+                          ),
+                        ),
 
-                  _StatCard(
-                    title: "TIME",
-                    value: speedProvider.formattedRideTime,
-                  ),
-                ],
-              ),
-            ],
+                        Expanded(
+                          child: _StatCard(
+                            title: "AVG",
+                            value: speedProvider.averageSpeed.toStringAsFixed(
+                              0,
+                            ),
+                            fontSize: statFontSize,
+                          ),
+                        ),
+
+                        Expanded(
+                          child: _StatCard(
+                            title: "DIST",
+                            value:
+                                "${(speedProvider.distanceTravelled / 1000).toStringAsFixed(1)} km",
+                            fontSize: statFontSize,
+                          ),
+                        ),
+
+                        Expanded(
+                          child: _StatCard(
+                            title: "TIME",
+                            value: speedProvider.formattedRideTime,
+                            fontSize: statFontSize,
+                          ),
+                        ),
+                      ],
+                    ),
+
+                    const SizedBox(height: 10),
+                  ],
+                ),
+              );
+            },
           ),
         );
       },
@@ -126,8 +176,13 @@ class SpeedometerPage extends StatelessWidget {
 class _StatCard extends StatelessWidget {
   final String title;
   final String value;
+  final double fontSize;
 
-  const _StatCard({required this.title, required this.value});
+  const _StatCard({
+    required this.title,
+    required this.value,
+    required this.fontSize,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -135,19 +190,26 @@ class _StatCard extends StatelessWidget {
       children: [
         Text(
           title,
+          textAlign: TextAlign.center,
           style: GoogleFonts.rajdhani(
-            fontSize: 16,
+            fontSize: 14,
             letterSpacing: 2,
             color: Colors.grey,
           ),
         ),
-        const SizedBox(height: 8),
-        Text(
-          value,
-          style: GoogleFonts.orbitron(
-            fontSize: 28,
-            fontWeight: FontWeight.bold,
-            color: Theme.of(context).colorScheme.tertiary,
+
+        const SizedBox(height: 6),
+
+        FittedBox(
+          fit: BoxFit.scaleDown,
+          child: Text(
+            value,
+            textAlign: TextAlign.center,
+            style: GoogleFonts.orbitron(
+              fontSize: fontSize,
+              fontWeight: FontWeight.bold,
+              color: Theme.of(context).colorScheme.tertiary,
+            ),
           ),
         ),
       ],

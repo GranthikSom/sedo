@@ -8,6 +8,7 @@ class SpeedProvider extends ChangeNotifier {
   Position? _currentPosition;
 
   StreamSubscription<Position>? _positionStream;
+  Timer? _uiTimer;
 
   // Ride Stats
   double _maxSpeed = 0;
@@ -19,9 +20,11 @@ class SpeedProvider extends ChangeNotifier {
 
   DateTime _rideStartTime = DateTime.now();
 
+  Duration _pausedDuration = Duration.zero;
+  DateTime? _pauseStartedAt;
+
   bool _isPaused = false;
 
-  // Getters
   double get speed => _speed;
 
   double get maxSpeed => _maxSpeed;
@@ -35,21 +38,32 @@ class SpeedProvider extends ChangeNotifier {
 
   bool get isPaused => _isPaused;
 
-  Duration get rideDuration => DateTime.now().difference(_rideStartTime);
+  Duration get rideDuration {
+    if (_isPaused && _pauseStartedAt != null) {
+      return _pauseStartedAt!.difference(_rideStartTime) - _pausedDuration;
+    }
 
-  String get formattedRideTime {
-    final duration = rideDuration;
-
-    final hours = duration.inHours;
-    final minutes = duration.inMinutes % 60;
-    final seconds = duration.inSeconds % 60;
-
-    return "${hours.toString().padLeft(2, '0')}:"
-        "${minutes.toString().padLeft(2, '0')}:"
-        "${seconds.toString().padLeft(2, '0')}";
+    return DateTime.now().difference(_rideStartTime) - _pausedDuration;
   }
 
+  String get formattedRideTime {
+    final d = rideDuration;
+
+    if (d.inHours > 0) {
+      return "${d.inHours}h ${d.inMinutes % 60}m";
+    }
+
+    return "${d.inMinutes}m ${d.inSeconds % 60}s";
+  }
+
+  // ==========================
+  // GPS TRACKING
+  // ==========================
+
   Future<void> startTracking() async {
+    // Prevent duplicate streams
+    if (_positionStream != null) return;
+
     bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
 
     if (!serviceEnabled) return;
@@ -64,6 +78,11 @@ class SpeedProvider extends ChangeNotifier {
       return;
     }
 
+    // UI timer for stopwatch updates
+    _uiTimer ??= Timer.periodic(const Duration(seconds: 1), (_) {
+      notifyListeners();
+    });
+
     _positionStream =
         Geolocator.getPositionStream(
           locationSettings: const LocationSettings(
@@ -73,8 +92,8 @@ class SpeedProvider extends ChangeNotifier {
         ).listen((Position position) {
           _currentPosition = position;
 
-          // Keep map updating while paused
           if (_isPaused) {
+            _speed = 0;
             notifyListeners();
             return;
           }
@@ -87,16 +106,16 @@ class SpeedProvider extends ChangeNotifier {
 
           _speed = speedKmh;
 
-          // Max Speed
+          // MAX SPEED
           if (_speed > _maxSpeed) {
             _maxSpeed = _speed;
           }
 
-          // Average Speed
+          // AVERAGE SPEED
           _totalSpeed += _speed;
           _speedSamples++;
 
-          // Distance
+          // DISTANCE
           if (_lastPosition != null) {
             _distanceTravelled += Geolocator.distanceBetween(
               _lastPosition!.latitude,
@@ -112,13 +131,39 @@ class SpeedProvider extends ChangeNotifier {
         });
   }
 
+  // ==========================
+  // PAUSE / RESUME
+  // ==========================
+
   void togglePause() {
-    _isPaused = !_isPaused;
+    if (_isPaused) {
+      // Resume
+
+      if (_pauseStartedAt != null) {
+        _pausedDuration += DateTime.now().difference(_pauseStartedAt!);
+      }
+
+      _pauseStartedAt = null;
+      _isPaused = false;
+    } else {
+      // Pause
+
+      _pauseStartedAt = DateTime.now();
+      _isPaused = true;
+
+      _speed = 0;
+    }
+
     notifyListeners();
   }
 
+  // ==========================
+  // RESET
+  // ==========================
+
   void resetStats() {
     _maxSpeed = 0;
+
     _totalSpeed = 0;
     _speedSamples = 0;
 
@@ -126,14 +171,25 @@ class SpeedProvider extends ChangeNotifier {
 
     _rideStartTime = DateTime.now();
 
+    _pausedDuration = Duration.zero;
+    _pauseStartedAt = null;
+
     _lastPosition = _currentPosition;
+
+    _speed = 0;
 
     notifyListeners();
   }
 
+  // ==========================
+  // CLEANUP
+  // ==========================
+
   @override
   void dispose() {
     _positionStream?.cancel();
+    _uiTimer?.cancel();
+
     super.dispose();
   }
 }
