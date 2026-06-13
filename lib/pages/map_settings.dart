@@ -21,7 +21,7 @@ class _MapSettingsState extends State<MapSettings> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Theme.of(context).colorScheme.secondary.withOpacity(0.6),
+      backgroundColor: Theme.of(context).colorScheme.secondary.withOpacity(0),
 
       body: Column(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
