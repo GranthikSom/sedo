@@ -127,7 +127,7 @@ class _MapSettingsState extends State<MapSettings> {
                       child: CircleAvatar(
                         radius: 49,
                         child: Icon(
-                          Icons.map,
+                          Icons.do_not_disturb,
                           size: 40,
                           color: Theme.of(context).colorScheme.tertiary,
                         ),
