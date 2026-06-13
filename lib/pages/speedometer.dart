@@ -103,7 +103,9 @@ class SpeedometerPage extends StatelessWidget {
                             style: GoogleFonts.orbitron(
                               fontSize: speedFontSize,
                               fontWeight: FontWeight.bold,
-                              color: Theme.of(context).colorScheme.tertiary,
+                              color: speedProvider.speed >= 40
+                                  ? Colors.red
+                                  : Theme.of(context).colorScheme.tertiary,
                             ),
                           ),
                         ),
@@ -113,7 +115,9 @@ class SpeedometerPage extends StatelessWidget {
                           style: GoogleFonts.rajdhani(
                             fontSize: 22,
                             letterSpacing: 4,
-                            color: Theme.of(context).colorScheme.tertiary,
+                            color: speedProvider.speed >= 40
+                                ? Colors.red
+                                : Theme.of(context).colorScheme.tertiary,
                           ),
                         ),
                       ],
@@ -186,33 +190,41 @@ class _StatCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        Text(
-          title,
-          textAlign: TextAlign.center,
-          style: GoogleFonts.rajdhani(
-            fontSize: 14,
-            letterSpacing: 2,
-            color: Colors.grey,
-          ),
-        ),
-
-        const SizedBox(height: 6),
-
-        FittedBox(
-          fit: BoxFit.scaleDown,
-          child: Text(
-            value,
-            textAlign: TextAlign.center,
-            style: GoogleFonts.orbitron(
-              fontSize: fontSize,
-              fontWeight: FontWeight.bold,
-              color: Theme.of(context).colorScheme.tertiary,
+    return Consumer<SpeedProvider>(
+      builder: (context, speedProvider, child) {
+        return Column(
+          children: [
+            Text(
+              title,
+              textAlign: TextAlign.center,
+              style: GoogleFonts.rajdhani(
+                fontSize: 14,
+                letterSpacing: 2,
+                color: speedProvider.speed >= 40
+                    ? Colors.red
+                    : Theme.of(context).colorScheme.tertiary,
+              ),
             ),
-          ),
-        ),
-      ],
+
+            const SizedBox(height: 6),
+
+            FittedBox(
+              fit: BoxFit.scaleDown,
+              child: Text(
+                value,
+                textAlign: TextAlign.center,
+                style: GoogleFonts.orbitron(
+                  fontSize: fontSize,
+                  fontWeight: FontWeight.bold,
+                  color: speedProvider.speed >= 40
+                      ? Colors.red
+                      : Theme.of(context).colorScheme.tertiary,
+                ),
+              ),
+            ),
+          ],
+        );
+      },
     );
   }
 }
