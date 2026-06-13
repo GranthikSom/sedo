@@ -104,6 +104,9 @@ class _ImageGalleryPageState extends State<ImageGalleryPage> {
               itemCount: _images.length,
               itemBuilder: (context, index) {
                 return Container(
+                  decoration: BoxDecoration(
+                    color: Theme.of(context).colorScheme.tertiary,
+                  ),
                   child: GestureDetector(
                     onTap: () => _openFullScreen(_images[index]),
                     onLongPress: () => _showDeleteDialog(index),
