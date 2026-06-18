@@ -2,6 +2,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:sedo/pages/drawer_secondary.dart' show DrawerSecondary;
+import 'package:sedo/pages/first.dart';
 import 'package:sedo/themes/theme_provider.dart' show ThemeProvider;
 import 'package:provider/provider.dart';
 
@@ -22,6 +23,7 @@ class SettingsPage extends StatelessWidget {
                 children: [
                   Expanded(
                     child: Container(
+                      height: 80,
                       decoration: BoxDecoration(
                         color: Theme.of(
                           context,
@@ -54,10 +56,27 @@ class SettingsPage extends StatelessWidget {
                   ),
 
                   Expanded(
-                    child: Container(
-                      decoration: BoxDecoration(
-                        color: Colors.red,
-                        borderRadius: BorderRadius.circular(12),
+                    child: GestureDetector(
+                      onTap: () {
+                        Navigator.pop(context);
+                        Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(builder: (context) => firstpage()),
+                        );
+                      },
+                      child: Container(
+                        height: 80,
+                        decoration: BoxDecoration(
+                          color: Theme.of(
+                            context,
+                          ).colorScheme.tertiary.withOpacity(0.2),
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        margin: EdgeInsets.all(20),
+                        padding: EdgeInsets.all(20),
+                        child: Center(
+                          child: Text("about", style: TextStyle(fontSize: 30)),
+                        ),
                       ),
                     ),
                   ),

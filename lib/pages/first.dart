@@ -7,7 +7,7 @@ import 'package:sedo/models/drawer_page.dart';
 import 'package:sedo/pages/map_page.dart';
 import 'package:sedo/pages/map_settings.dart';
 import 'package:sedo/pages/speedometer.dart';
-
+import 'package:sedo/models/future.dart';
 import 'musicplayer_page.dart' show MusicplayerPage;
 
 class firstpage extends StatefulWidget {
@@ -28,8 +28,10 @@ class _firstpageState extends State<firstpage> {
 
   final List<Widget> pages = [
     SpeedometerPage(),
-    MapSettings(),
-    MusicplayerPage(),
+    //MapSettings(),
+    //MusicplayerPage(),
+    Future(),
+    Future(),
   ];
 
   @override

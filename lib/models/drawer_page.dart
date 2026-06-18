@@ -3,6 +3,7 @@
 import 'package:flutter/material.dart';
 import 'package:sedo/models/box.dart' show Box;
 import 'package:sedo/pages/first.dart';
+import 'package:sedo/pages/fullscreen_map.dart';
 import 'package:sedo/pages/picture.dart';
 import 'package:sedo/pages/settings.dart';
 
@@ -81,7 +82,7 @@ class DrawerPage extends StatelessWidget {
                     Navigator.pop(context);
                     Navigator.pushReplacement(
                       context,
-                      MaterialPageRoute(builder: (context) => firstpage()),
+                      MaterialPageRoute(builder: (context) => FullscreenMap()),
                     );
                   },
                   child: Padding(
