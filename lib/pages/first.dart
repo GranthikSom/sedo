@@ -2,7 +2,6 @@
 
 import 'package:flutter/material.dart';
 import 'package:sedo/models/box.dart';
-//import 'package:sedo/models/drawer.dart' show MyDrawer;
 import 'package:sedo/models/drawer_page.dart';
 import 'package:sedo/pages/map_page.dart';
 import 'package:sedo/pages/map_settings.dart';
