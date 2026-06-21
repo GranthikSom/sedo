@@ -3,7 +3,7 @@
 import 'package:flutter/material.dart';
 import 'package:sedo/pages/about.dart';
 import 'package:sedo/pages/drawer_secondary.dart' show DrawerSecondary;
-import 'package:sedo/pages/first.dart';
+
 import 'package:sedo/themes/theme_provider.dart' show ThemeProvider;
 import 'package:provider/provider.dart';
 
