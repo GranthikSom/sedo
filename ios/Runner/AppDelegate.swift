@@ -1,24 +1,51 @@
-import Flutter
 import UIKit
-import GoogleMaps
+import Flutter
 
 @main
-@objc class AppDelegate: FlutterAppDelegate, FlutterImplicitEngineDelegate {
+@objc class AppDelegate: FlutterAppDelegate {
 
-  override func application(
-    _ application: UIApplication,
-    didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?
-  ) -> Bool {
+    override func application(
+        _ application: UIApplication,
+        didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?
+    ) -> Bool {
 
-    GMSServices.provideAPIKey("AIzaSyCVJcvjokdnJ9tXBm9wKfh7KjRfdWFoDs0")
+        GeneratedPluginRegistrant.register(with: self)
 
-    return super.application(
-      application,
-      didFinishLaunchingWithOptions: launchOptions
-    )
-  }
+        if let controller = window?.rootViewController as? FlutterViewController {
 
-  func didInitializeImplicitFlutterEngine(_ engineBridge: FlutterImplicitEngineBridge) {
-    GeneratedPluginRegistrant.register(with: engineBridge.pluginRegistry)
-  }
+            let channel = FlutterMethodChannel(
+                name: "music/bridge",
+                binaryMessenger: controller.binaryMessenger
+            )
+
+            channel.setMethodCallHandler { call, result in
+
+                switch call.method {
+
+                case "nowPlaying":
+                    result([
+                        "title": "Test Song",
+                        "artist": "Test Artist"
+                    ])
+
+                case "playPause":
+                    result(nil)
+
+                case "next":
+                    result(nil)
+
+                case "previous":
+                    result(nil)
+
+                default:
+                    result(FlutterMethodNotImplemented)
+                }
+            }
+        }
+
+        return super.application(
+            application,
+            didFinishLaunchingWithOptions: launchOptions
+        )
+    }
 }

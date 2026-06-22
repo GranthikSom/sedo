@@ -7,7 +7,7 @@ import 'package:provider/provider.dart';
 import 'package:sedo/pages/auth.dart';
 import 'package:sedo/pages/first.dart';
 import 'package:sedo/service/gps_provider.dart';
-import 'package:sedo/service/playlist_provider.dart';
+
 import 'package:sedo/themes/theme_provider.dart';
 
 import 'package:wakelock_plus/wakelock_plus.dart';
@@ -36,8 +36,6 @@ void main() async {
     MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (_) => ThemeProvider()),
-
-        ChangeNotifierProvider(create: (_) => PlaylistProvider()),
 
         ChangeNotifierProvider(
           create: (_) {
