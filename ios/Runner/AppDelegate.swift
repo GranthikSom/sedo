@@ -10,38 +10,7 @@ import Flutter
     ) -> Bool {
 
         GeneratedPluginRegistrant.register(with: self)
-
-        if let controller = window?.rootViewController as? FlutterViewController {
-
-            let channel = FlutterMethodChannel(
-                name: "music/bridge",
-                binaryMessenger: controller.binaryMessenger
-            )
-
-            channel.setMethodCallHandler { call, result in
-
-                switch call.method {
-
-                case "nowPlaying":
-                    result([
-                        "title": "Test Song",
-                        "artist": "Test Artist"
-                    ])
-
-                case "playPause":
-                    result(nil)
-
-                case "next":
-                    result(nil)
-
-                case "previous":
-                    result(nil)
-
-                default:
-                    result(FlutterMethodNotImplemented)
-                }
-            }
-        }
+        MusicBridgePlugin.register(with: self)
 
         return super.application(
             application,

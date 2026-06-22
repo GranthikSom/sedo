@@ -9,8 +9,7 @@ import 'package:sedo/pages/map_page.dart';
 import 'package:sedo/pages/speedometer.dart';
 import 'package:sedo/models/future.dart';
 
-import 'musicplayer_page.dart'
-    show MusicPlayerPage, MusicplayerPage, SedoMusicBridgeApp;
+import 'musicplayer_page.dart' show MusicPlayerPage;
 
 class firstpage extends StatefulWidget {
   const firstpage({super.key});
