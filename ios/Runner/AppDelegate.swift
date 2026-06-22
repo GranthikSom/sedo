@@ -10,7 +10,9 @@ import Flutter
     ) -> Bool {
 
         GeneratedPluginRegistrant.register(with: self)
-        MusicBridgePlugin.register(with: self)
+
+        let registrar = self.registrar(forPlugin: "MusicBridgePlugin")!
+        MusicBridgePlugin.register(with: registrar)
 
         return super.application(
             application,
