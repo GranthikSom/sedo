@@ -1,342 +1,94 @@
 # Sedo
 
-**Sedo** is a cross-platform motorcycle dashboard application built with Flutter for Android and iOS devices.
+**Sedo** is an open-source motorcycle dashboard application built with Flutter for Android and iOS.
 
-Designed specifically for riders, Sedo transforms a smartphone into a motorcycle-friendly dashboard that combines navigation, speed monitoring, media controls, and offline map capabilities in a clean, distraction-free interface.
+Designed specifically for riders, Sedo transforms a smartphone into a motorcycle-friendly dashboard featuring real-time GPS speed monitoring, navigation, ride statistics, and system-wide media controls in a clean, distraction-free interface.
 
-The project follows an **offline-first philosophy**, allowing riders to access navigation and essential riding information even in areas with limited or no network connectivity.
+Unlike traditional motorcycle infotainment systems, Sedo aims to provide essential riding information using only a smartphone, making advanced dashboard functionality accessible without expensive hardware.
 
----
-<img src="readme_assets/test.gif" alt="Demo" width="800">
-
-
-
-# Features
-
-| Feature                  | Description                              |
-| ------------------------ | ---------------------------------------- |
-| OpenStreetMap Navigation | Interactive map powered by OpenStreetMap |
-| Offline Maps             | Download map regions for offline usage   |
-| GPS Tracking             | Real-time rider location tracking        |
-| Digital Speedometer      | GPS-based speed monitoring               |
-| Music Player             | Local music playback and controls        |
-| Image Gallery            | Access and manage ride photos            |
-| Dark Mode                | Night-friendly riding interface          |
-| Rider Dashboard          | Unified view of maps, speed, and media   |
-| Cross-Platform           | Runs on both Android and iOS             |
+The project is actively developed and tested in real-world riding conditions, with a focus on usability, reliability, and rider safety.
 
 ---
 
-# Vision
-
-Sedo aims to become a lightweight rider-focused alternative to traditional motorcycle infotainment systems.
-
-Inspired by modern motorcycle TFT displays and vehicle dashboard systems, Sedo focuses on delivering:
-
-* Navigation
-* Speed monitoring
-* Offline map access
-* Nearby points of interest
-* Music controls
-* Ride information
-
-without requiring expensive hardware or continuous internet access.
+<img src="readme_assets/test.gif" alt="Sedo Demo" width="800">
 
 ---
 
-# Supported Platforms
+## Current Features
 
-| Platform | Status    |
-| -------- | --------- |
-| Android  | Supported |
-| iOS      | Supported |
+| Feature                | Status |
+| ---------------------- | ------ |
+| GPS Speedometer        | ✅      |
+| Live Navigation Map    | ✅      |
+| Ride Distance Tracking | ✅      |
+| Average Speed Tracking | ✅      |
+| Maximum Speed Tracking | ✅      |
+| Ride Timer             | ✅      |
+| Dark / Light Themes    | ✅      |
+| Android Media Controls | ✅      |
+| iOS Media Controls     | ✅      |
+| Cross-Platform Support | ✅      |
 
----
+## Key Features
 
-# Minimum Requirements
+### Real-Time Speedometer
 
-## Android
+GPS-based speed tracking optimized for motorcycle riding.
 
-* Android 8.0 (Oreo) or later
+### Live Navigation Map
 
-## iOS
+Rotating rider-focused map with smooth camera following and automatic zoom adjustments based on speed.
 
-* iOS 13 or later
+### Ride Statistics
 
-## Linux
+Track:
 
-* there will be support for linux in future
+* Current Speed
+* Maximum Speed
+* Average Speed
+* Distance Travelled
+* Ride Duration
 
----
+### Universal Media Controls
 
-# Screens
+Control media playback from supported music applications directly within Sedo.
 
-* Dashboard
-* Maps
-* Speedometer
-* Music Player
-* Gallery
-* Settings
+### Rider-Focused Interface
 
----
+* Large readable typography
+* Landscape-first design
+* Dark and light themes
+* Optimized for phone mounts and motorcycle use
 
-# Roadmap
+## Project Status
 
-## Phase 1 — Core Dashboard
+Sedo is currently in active development and has been tested on real motorcycle rides.
 
-* [x] Dashboard UI
-* [x] Music Player
-* [x] Gallery Access
-* [x] Theme Switching
+## Roadmap
 
-## Phase 2 — Maps & Tracking
+### Completed
 
-* [ ] Migrate from Google Maps to OpenStreetMap
-* [ ] GPS Location Tracking
-* [ ] GPS-Based Speedometer
-* [ ] Live Position Marker
+* [x] GPS Speedometer
+* [x] Ride Statistics
+* [x] Distance Tracking
+* [x] Live Navigation Map
+* [x] Dynamic Map Zoom
+* [x] Dark / Light Themes
+* [x] Android Media Controls
+* [x] iOS Media Controls
 
-## Phase 3 — Offline Maps
+### Planned
 
-* [ ] Regional Map Downloads
-* [ ] Offline Tile Storage
-* [ ] Download Manager
-* [ ] Storage Management
-
-## Phase 4 — Rider Utilities
-
-* [ ] Nearby Petrol Pumps
-* [ ] Nearby Restaurants
-* [ ] Nearby Hospitals
-* [ ] Nearby ATMs
-* [ ] Nearby Repair Shops
-
-## Phase 5 — Navigation
-
-* [ ] Offline Route Calculation
-* [ ] Turn-by-Turn Navigation
-* [ ] Route Recalculation
-* [ ] ETA Calculation
-
-## Phase 6 — Advanced Features
-
-* [ ] Ride Recording
+* [ ] Album Art & Metadata Display
+* [ ] Offline Maps
+* [ ] GPX Export
 * [ ] Ride History
-* [ ] Distance Tracking
-* [ ] Average Speed Statistics
+* [ ] Nearby Fuel Stations
+* [ ] Nearby Repair Shops
+* [ ] Turn-by-Turn Navigation
+* [ ] Bluetooth Helmet Integration
 * [ ] Weather Integration
-* [ ] Maintenance Reminders
-* [ ] Bluetooth Helmet Controls
 
 ---
 
-# Architecture
-
-```text
-lib/
-├── main.dart
-├── models/
-│   ├── ball.dart
-│   ├── box.dart
-│   └── drawer_page.dart
-├── pages/
-│   ├── first.dart
-│   ├── map_page.dart
-│   ├── musicplayer_page.dart
-│   ├── picture.dart
-│   ├── settings.dart
-│   └── speedometer.dart
-├── service/
-│   ├── playlist_provider.dart
-│   └── song_data.dart
-├── themes/
-│   ├── dark_mode.dart
-│   ├── light_mode.dart
-│   └── theme_provider.dart
-└── assets/
-    ├── cover/
-    └── mp4/
-```
-
----
-
-# Planned Architecture
-
-```text
-lib/
-├── core/
-│   ├── constants/
-│   ├── services/
-│   └── utils/
-├── features/
-│   ├── dashboard/
-│   ├── maps/
-│   ├── navigation/
-│   ├── speedometer/
-│   ├── music/
-│   ├── gallery/
-│   └── settings/
-├── providers/
-├── themes/
-└── models/
-```
-
----
-
-# Tech Stack
-
-## Framework
-
-* Flutter
-
-## State Management
-
-* Provider
-
-## Maps
-
-* flutter_map
-* OpenStreetMap
-
-## Location Services
-
-* geolocator
-
-## Audio
-
-* audioplayers
-
-## Images
-
-* image_picker
-
-## Offline Maps
-
-* flutter_map_tile_caching *(planned)*
-
-## Navigation & Routing
-
-* OpenStreetMap
-* GraphHopper *(planned)*
-
----
-
-# Installation
-
-Clone the repository:
-
-```bash
-git clone https://github.com/GranthikSom/sedo.git
-cd sedo
-```
-
-Install dependencies:
-
-```bash
-flutter pub get
-```
-
-Run the application:
-
-```bash
-flutter run
-```
-
----
-
-# Project Structure
-
-```text
-assets/
-├── cover/
-│   └── Album artwork
-└── mp4/
-    └── Audio files
-
-lib/
-├── models/
-├── pages/
-├── service/
-├── themes/
-└── main.dart
-```
-
----
-
-# Offline Maps (Planned)
-
-Sedo is being developed with offline navigation in mind.
-
-Future versions will allow users to:
-
-* Download regions before a trip
-* Access maps without internet
-* Search nearby points of interest
-* Navigate using GPS only
-* Store maps locally on the device
-
-Supported offline data:
-
-* Roads
-* Buildings
-* Petrol Pumps
-* Restaurants
-* Hospitals
-* ATMs
-* Hotels
-* Repair Shops
-
----
-
-# Use Cases
-
-### Daily Commuting
-
-* Navigation
-* Speed monitoring
-* Music controls
-
-### Long Distance Touring
-
-* Offline maps
-* Fuel stop discovery
-* Route guidance
-
-### Adventure Riding
-
-* GPS tracking
-* Offline navigation
-* Remote area support
-
----
-
-# Contributing
-
-Contributions, ideas, feature requests, and pull requests are welcome.
-
-If you would like to contribute:
-
-1. Fork the repository
-2. Create a feature branch
-3. Commit your changes
-4. Submit a pull request
-
----
-
-# License
-
-This project is released under the MIT License.
-
-See the LICENSE file for details.
-
----
-
-# Author
-
-**Granthik Som**
-
-GitHub: https://github.com/GranthikSom
-
----
-
-### Ride Smarter. Ride Offline. Ride with Sedo.
+### Ride Smarter. Ride Safer. Ride with Sedo.
