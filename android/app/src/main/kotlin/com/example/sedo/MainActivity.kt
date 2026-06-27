@@ -1,7 +1,7 @@
 package com.example.sedo
 
-import android.content.Intent
-import android.view.KeyEvent
+import android.media.session.MediaSession
+import android.media.session.PlaybackState
 import io.flutter.embedding.android.FlutterActivity
 import io.flutter.embedding.engine.FlutterEngine
 import io.flutter.plugin.common.MethodChannel
@@ -9,9 +9,17 @@ import io.flutter.plugin.common.MethodChannel
 class MainActivity : FlutterActivity() {
 
     private val CHANNEL = "sedo/media"
+    private var mediaSession: MediaSession? = null
 
     override fun configureFlutterEngine(flutterEngine: FlutterEngine) {
         super.configureFlutterEngine(flutterEngine)
+
+        mediaSession = MediaSession(this, "SedoSession")
+        mediaSession?.setFlags(
+            MediaSession.FLAG_HANDLES_MEDIA_BUTTONS or
+            MediaSession.FLAG_HANDLES_TRANSPORT_CONTROLS
+        )
+        mediaSession?.isActive = true
 
         MethodChannel(
             flutterEngine.dartExecutor.binaryMessenger,
@@ -21,17 +29,23 @@ class MainActivity : FlutterActivity() {
             when (call.method) {
 
                 "playPause" -> {
-                    sendMediaButton(KeyEvent.KEYCODE_MEDIA_PLAY_PAUSE)
+                    val controls = mediaSession?.controller?.transportControls
+                    val state = mediaSession?.controller?.playbackState
+                    if (state?.state == PlaybackState.STATE_PLAYING) {
+                        controls?.pause()
+                    } else {
+                        controls?.play()
+                    }
                     result.success(null)
                 }
 
                 "next" -> {
-                    sendMediaButton(KeyEvent.KEYCODE_MEDIA_NEXT)
+                    mediaSession?.controller?.transportControls?.skipToNext()
                     result.success(null)
                 }
 
                 "previous" -> {
-                    sendMediaButton(KeyEvent.KEYCODE_MEDIA_PREVIOUS)
+                    mediaSession?.controller?.transportControls?.skipToPrevious()
                     result.success(null)
                 }
 
@@ -49,19 +63,8 @@ class MainActivity : FlutterActivity() {
         }
     }
 
-    private fun sendMediaButton(keyCode: Int) {
-        val downIntent = Intent(Intent.ACTION_MEDIA_BUTTON)
-        downIntent.putExtra(
-            Intent.EXTRA_KEY_EVENT,
-            KeyEvent(KeyEvent.ACTION_DOWN, keyCode)
-        )
-        sendOrderedBroadcast(downIntent, null)
-
-        val upIntent = Intent(Intent.ACTION_MEDIA_BUTTON)
-        upIntent.putExtra(
-            Intent.EXTRA_KEY_EVENT,
-            KeyEvent(KeyEvent.ACTION_UP, keyCode)
-        )
-        sendOrderedBroadcast(upIntent, null)
+    override fun onDestroy() {
+        super.onDestroy()
+        mediaSession?.release()
     }
 }

@@ -94,9 +94,7 @@ class _firstpageState extends State<firstpage> {
               height: 100,
 
               child: FloatingActionButton(
-                backgroundColor: Theme.of(
-                  context,
-                ).colorScheme.inversePrimary.withOpacity(0),
+                backgroundColor: const Color.fromARGB(0, 255, 255, 255),
                 //mini: true,
                 onPressed: () {
                   _scaffoldKey.currentState?.openDrawer();
