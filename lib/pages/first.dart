@@ -72,14 +72,7 @@ class _firstpageState extends State<firstpage> {
                 Expanded(
                   child: Box(
                     child: Center(
-                      child: SizedBox(
-                        width: 450,
-                        height: 450,
-                        child: IndexedStack(
-                          index: currentIndex,
-                          children: pages,
-                        ),
-                      ),
+                      child: IndexedStack(index: currentIndex, children: pages),
                     ),
                   ),
                 ),
@@ -94,7 +87,9 @@ class _firstpageState extends State<firstpage> {
               height: 100,
 
               child: FloatingActionButton(
-                backgroundColor: const Color.fromARGB(0, 255, 255, 255),
+                backgroundColor: Colors.transparent,
+                elevation: 0,
+                highlightElevation: 0,
                 //mini: true,
                 onPressed: () {
                   _scaffoldKey.currentState?.openDrawer();
