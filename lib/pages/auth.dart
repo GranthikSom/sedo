@@ -34,7 +34,7 @@ class Auth extends StatelessWidget {
                     style: TextStyle(color: Colors.white70, fontSize: 16),
                   ),
                   // Logo
-                  Image.asset('assets/images/logo.png', width: 400),
+                  Image.asset('assets/images/logo.jpg', width: 400),
 
                   // Subtitle
                   const Text(
