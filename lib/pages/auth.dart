@@ -15,7 +15,6 @@ class Auth extends StatelessWidget {
           ),
 
           // Dark overlay (optional, makes text easier to read)
-          Container(color: Colors.black.withOpacity(0.3)),
 
           // Center Content
           Center(
@@ -29,15 +28,15 @@ class Auth extends StatelessWidget {
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  // Logo
-                  Image.asset('assets/images/logo.png', width: 400),
-
-                  // Subtitle
                   const Text(
                     'Tap anywhere on the logo to continue',
                     textAlign: TextAlign.center,
                     style: TextStyle(color: Colors.white70, fontSize: 16),
                   ),
+                  // Logo
+                  Image.asset('assets/images/logo.png', width: 400),
+
+                  // Subtitle
                   const Text(
                     'Sedo Test Mk1',
                     textAlign: TextAlign.center,
