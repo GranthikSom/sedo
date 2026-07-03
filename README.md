@@ -1,5 +1,7 @@
 # Sedo
 
+![Release](https://img.shields.io/github/v/release/GranthikSom/sedo?include_prereleases)
+
 **Sedo** is an open-source motorcycle dashboard application built with Flutter for Android and iOS.
 
 Designed specifically for riders, Sedo transforms a smartphone into a motorcycle-friendly dashboard featuring real-time GPS speed monitoring, navigation, ride statistics, and system-wide media controls in a clean, distraction-free interface.
