@@ -2,51 +2,38 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-
 	<key>CADisableMinimumFrameDurationOnPhone</key>
 	<true/>
-
-	<key>UIBackgroundModes</key>
-	<array>
-		<string>audio</string>
-	</array>
-
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
-
 	<key>CFBundleDisplayName</key>
 	<string>Sedo</string>
-
 	<key>CFBundleExecutable</key>
 	<string>$(EXECUTABLE_NAME)</string>
-
 	<key>CFBundleIdentifier</key>
 	<string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
-
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
-
 	<key>CFBundleName</key>
 	<string>sedo</string>
-
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
-
 	<key>CFBundleShortVersionString</key>
 	<string>$(FLUTTER_BUILD_NAME)</string>
-
 	<key>CFBundleSignature</key>
 	<string>????</string>
-
 	<key>CFBundleVersion</key>
 	<string>$(FLUTTER_BUILD_NUMBER)</string>
-
-	<key>NSAppleMusicUsageDescription</key>
-    <string>Used to access current music information.</string>
-
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
-
+	<key>NSAppleMusicUsageDescription</key>
+	<string>Used to access current music information.</string>
+	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+	<string>Sedo uses your location for navigation, speed tracking, and ride information.</string>
+	<key>NSLocationAlwaysUsageDescription</key>
+	<string>Sedo uses your location for navigation, speed tracking, and ride information.</string>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>Sedo uses your location for navigation, speed tracking, and ride information.</string>
 	<key>UIApplicationSceneManifest</key>
 	<dict>
 		<key>UIApplicationSupportsMultipleScenes</key>
@@ -68,38 +55,27 @@
 			</array>
 		</dict>
 	</dict>
-
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
-
+	<key>UIBackgroundModes</key>
+	<array>
+		<string>audio</string>
+	</array>
 	<key>UILaunchStoryboardName</key>
 	<string>LaunchScreen</string>
-
 	<key>UIMainStoryboardFile</key>
 	<string>Main</string>
-
+	<key>UIStatusBarHidden</key>
+	<false/>
 	<key>UISupportedInterfaceOrientations</key>
 	<array>
 		<string>UIInterfaceOrientationLandscapeLeft</string>
 		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
-
 	<key>UISupportedInterfaceOrientations~ipad</key>
 	<array>
 		<string>UIInterfaceOrientationLandscapeLeft</string>
 		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
-
-	<!-- Location Permissions -->
-
-	<key>NSLocationWhenInUseUsageDescription</key>
-	<string>Sedo uses your location for navigation, speed tracking, and ride information.</string>
-
-	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
-	<string>Sedo uses your location for navigation, speed tracking, and ride information.</string>
-
-	<key>NSLocationAlwaysUsageDescription</key>
-	<string>Sedo uses your location for navigation, speed tracking, and ride information.</string>
-
 </dict>
 </plist>
