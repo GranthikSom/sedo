@@ -16,8 +16,9 @@ class _MusicPlayerPageState extends State<MusicPlayerPage>
 
   String _title = '—';
   String _artist = '—';
-  bool _isPlaying = false;
+  bool _isPlaying = true;
   bool _loading = true;
+  bool _fetching = false;
 
   Timer? _pollTimer;
   late AnimationController _pulseController;
@@ -30,18 +31,16 @@ class _MusicPlayerPageState extends State<MusicPlayerPage>
     _pulseController = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 1200),
-    )..repeat(reverse: true);
-
+    );
     _pulseAnimation = Tween<double>(begin: 0.85, end: 1.0).animate(
       CurvedAnimation(parent: _pulseController, curve: Curves.easeInOut),
     );
 
     _controller.setOnNowPlayingChanged(_fetchNowPlaying);
-
     _fetchNowPlaying();
 
     _pollTimer = Timer.periodic(
-      const Duration(milliseconds: 2500),
+      const Duration(seconds: 10),
       (_) => _fetchNowPlaying(),
     );
   }
@@ -50,31 +49,37 @@ class _MusicPlayerPageState extends State<MusicPlayerPage>
   void dispose() {
     _pollTimer?.cancel();
     _pulseController.dispose();
+    _controller.dispose();
     super.dispose();
   }
 
   Future<void> _fetchNowPlaying() async {
+    if (_fetching) return;
+    _fetching = true;
+
     final info = await _controller.nowPlaying();
 
+    _fetching = false;
     if (!mounted) return;
 
     setState(() {
-      _title = info['title'] ?? '—';
-      _artist = info['artist'] ?? '—';
+      _title = info['title'] as String? ?? '—';
+      _artist = info['artist'] as String? ?? '—';
+      _isPlaying = info['isPlaying'] as bool? ?? false;
       _loading = false;
-      _isPlaying = _title != 'Unknown' && _title != '—';
+
+      if (_isPlaying) {
+        _pulseController.repeat(reverse: true);
+      } else {
+        _pulseController.stop();
+        _pulseController.value = 1.0;
+      }
     });
   }
 
   Future<void> _handlePlayPause() async {
     HapticFeedback.mediumImpact();
     await _controller.playPause();
-
-    setState(() {
-      _isPlaying = !_isPlaying;
-    });
-
-    await Future.delayed(const Duration(milliseconds: 300));
     await _fetchNowPlaying();
   }
 
@@ -92,21 +97,17 @@ class _MusicPlayerPageState extends State<MusicPlayerPage>
 
   @override
   Widget build(BuildContext context) {
-    final size = MediaQuery.of(context).size;
-
-    return Container(
-      child: Column(
-        children: [
-          Expanded(
-            child: Center(
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 32),
-                child: _loading ? _buildLoadingState() : _buildContent(size),
-              ),
+    return Column(
+      children: [
+        Expanded(
+          child: Center(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 32),
+              child: _loading ? _buildLoadingState() : _buildContent(),
             ),
           ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 
@@ -114,8 +115,9 @@ class _MusicPlayerPageState extends State<MusicPlayerPage>
     return const Center(child: CircularProgressIndicator());
   }
 
-  Widget _buildContent(Size size) {
-    return ListView(
+  Widget _buildContent() {
+    return Column(
+      mainAxisSize: MainAxisSize.min,
       children: [
         const SizedBox(height: 90),
         Text(
@@ -144,6 +146,9 @@ class _MusicPlayerPageState extends State<MusicPlayerPage>
               icon: const Icon(Icons.skip_previous),
             ),
             const SizedBox(width: 20),
+            //ScaleTransition(
+            // scale: _pulseAnimation,
+            // child:
             GestureDetector(
               onTap: _handlePlayPause,
               child: Container(
@@ -160,6 +165,7 @@ class _MusicPlayerPageState extends State<MusicPlayerPage>
                 ),
               ),
             ),
+            // ),
             const SizedBox(width: 20),
             IconButton(
               iconSize: 40,

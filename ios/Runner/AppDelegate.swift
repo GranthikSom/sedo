@@ -112,8 +112,9 @@ private let _mrGetNowPlaying: MRMediaRemoteGetNowPlayingInfoType? = {
             let info = MPNowPlayingInfoCenter.default().nowPlayingInfo
             let title  = info?[MPMediaItemPropertyTitle]  as? String ?? "Unknown"
             let artist = info?[MPMediaItemPropertyArtist] as? String ?? "Unknown"
-            NSLog("[Sedo] fallback → title='\(title)' artist='\(artist)'")
-            result(["title": title, "artist": artist])
+            let rate   = info?[MPNowPlayingInfoPropertyPlaybackRate] as? Double ?? 0
+            NSLog("[Sedo] fallback → title='\(title)' artist='\(artist)' rate=\(rate)")
+            result(["title": title, "artist": artist, "isPlaying": rate > 0])
         }
 
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
@@ -133,12 +134,19 @@ private let _mrGetNowPlaying: MRMediaRemoteGetNowPlayingInfoType? = {
                 let artist = (ns["kMRMediaRemoteNowPlayingInfoArtist"] as? String)
                           ?? (ns[MPMediaItemPropertyArtist] as? String)
                           ?? "Unknown"
+                let rate   = (ns["kMRMediaRemoteNowPlayingInfoPlaybackRate"] as? Double)
+                          ?? (ns[MPNowPlayingInfoPropertyPlaybackRate] as? Double)
+                          ?? 0
                 let artworkData = ns["kMRMediaRemoteNowPlayingInfoArtworkData"] as? Data
-                var resultMap: [String: String] = ["title": title, "artist": artist]
+                var resultMap: [String: Any] = [
+                    "title": title,
+                    "artist": artist,
+                    "isPlaying": rate > 0,
+                ]
                 if let data = artworkData {
                     resultMap["artwork"] = data.base64EncodedString()
                 }
-                NSLog("[Sedo] MRMediaRemote → title='\(title)' artist='\(artist)'")
+                NSLog("[Sedo] MRMediaRemote → title='\(title)' artist='\(artist)' rate=\(rate)")
                 result(resultMap)
             } else if attempt < 2 {
                 NSLog("[Sedo] MRMediaRemote → nil (attempt \(attempt)/2), retrying in 1s…")
