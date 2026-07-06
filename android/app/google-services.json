@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "742373834806",
+    "project_id": "sedo-auth",
+    "storage_bucket": "sedo-auth.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:742373834806:android:9dcc41e1aea7505b01d897",
+        "android_client_info": {
+          "package_name": "com.example.sedo"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBJkAgWU-Xjs4DKlYh8Nf_otWUmzHWK9p4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

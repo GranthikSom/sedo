@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:sedo/pages/first.dart';
+import 'package:sedo/service/firebaseauth.dart';
 
 class Auth extends StatelessWidget {
   const Auth({super.key});
@@ -66,15 +67,33 @@ class Auth extends StatelessWidget {
                             ),
                           );
                         },
-                        child: Container(
-                          width: 100,
-                          height: 100,
-                          decoration: const BoxDecoration(
-                            borderRadius: BorderRadius.all(Radius.circular(10)),
-                            color: Colors.white,
-                            image: DecorationImage(
-                              image: AssetImage('assets/images/google.png'),
-                              fit: BoxFit.cover,
+                        child: GestureDetector(
+                          onTap: () async {
+                            Navigator.pushReplacement(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => const firstpage(),
+                              ),
+                            );
+                            final userCredential = await AuthService()
+                                .signInWithGoogle();
+
+                            if (userCredential != null) {
+                              print(userCredential.user?.email);
+                            }
+                          },
+                          child: Container(
+                            width: 100,
+                            height: 100,
+                            decoration: const BoxDecoration(
+                              borderRadius: BorderRadius.all(
+                                Radius.circular(10),
+                              ),
+                              color: Colors.white,
+                              image: DecorationImage(
+                                image: AssetImage('assets/images/google.png'),
+                                fit: BoxFit.cover,
+                              ),
                             ),
                           ),
                         ),
