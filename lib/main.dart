@@ -1,9 +1,11 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:sedo/firebase_options.dart' show DefaultFirebaseOptions;
 import 'package:sedo/pages/auth.dart';
+import 'package:sedo/pages/first.dart';
 import 'package:sedo/service/gps_provider.dart';
 import 'package:sedo/themes/theme_provider.dart';
 import 'package:wakelock_plus/wakelock_plus.dart';
@@ -60,7 +62,25 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       theme: Provider.of<ThemeProvider>(context).themeData,
-      home: const Auth(),
+      home: StreamBuilder<User?>(
+        stream: FirebaseAuth.instance.authStateChanges(),
+        builder: (context, snapshot) {
+          // Loading
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Scaffold(
+              body: Center(child: CircularProgressIndicator()),
+            );
+          }
+
+          // User logged in
+          if (snapshot.hasData) {
+            return const firstpage();
+          }
+
+          // User not logged in
+          return const Auth();
+        },
+      ),
     );
   }
 }

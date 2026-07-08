@@ -103,7 +103,7 @@ class SpeedometerPage extends StatelessWidget {
                             style: GoogleFonts.orbitron(
                               fontSize: speedFontSize,
                               fontWeight: FontWeight.bold,
-                              color: speedProvider.speed >= 40
+                              color: speedProvider.speed >= 100
                                   ? Colors.red
                                   : Theme.of(context).colorScheme.tertiary,
                             ),
@@ -115,7 +115,7 @@ class SpeedometerPage extends StatelessWidget {
                           style: GoogleFonts.rajdhani(
                             fontSize: 22,
                             letterSpacing: 4,
-                            color: speedProvider.speed >= 40
+                            color: speedProvider.speed >= 100
                                 ? Colors.red
                                 : Theme.of(context).colorScheme.tertiary,
                           ),
@@ -200,7 +200,7 @@ class _StatCard extends StatelessWidget {
               style: GoogleFonts.rajdhani(
                 fontSize: 14,
                 letterSpacing: 2,
-                color: speedProvider.speed >= 40
+                color: speedProvider.speed >= 100
                     ? Colors.red
                     : Theme.of(context).colorScheme.tertiary,
               ),
@@ -216,7 +216,7 @@ class _StatCard extends StatelessWidget {
                 style: GoogleFonts.orbitron(
                   fontSize: fontSize,
                   fontWeight: FontWeight.bold,
-                  color: speedProvider.speed >= 40
+                  color: speedProvider.speed >= 100
                       ? Colors.red
                       : Theme.of(context).colorScheme.tertiary,
                 ),

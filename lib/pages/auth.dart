@@ -32,7 +32,7 @@ class Auth extends StatelessWidget {
                   // Logo
                   Image.asset('assets/images/logo.png', width: 300),
 
-                  Row(
+                  Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       GestureDetector(
@@ -44,20 +44,31 @@ class Auth extends StatelessWidget {
                             ),
                           );
                         },
-                        child: Container(
-                          width: 100,
-                          height: 100,
-                          decoration: const BoxDecoration(
-                            borderRadius: BorderRadius.all(Radius.circular(10)),
-                            color: Colors.white,
-                            image: DecorationImage(
-                              image: AssetImage('assets/images/apple.png'),
-                              fit: BoxFit.cover,
+                        child: GestureDetector(
+                          onTap: () async {
+                            Navigator.pushReplacement(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => const firstpage(),
+                              ),
+                            );
+                          },
+                          child: Container(
+                            width: 200,
+                            height: 50,
+                            decoration: const BoxDecoration(
+                              borderRadius: BorderRadius.all(
+                                Radius.circular(10),
+                              ),
+                              color: Colors.white,
+                              image: DecorationImage(
+                                image: AssetImage('assets/images/apple.png'),
+                              ),
                             ),
                           ),
                         ),
                       ),
-                      const SizedBox(width: 60),
+                      const SizedBox(height: 10),
                       GestureDetector(
                         onTap: () {
                           Navigator.pushReplacement(
@@ -83,8 +94,8 @@ class Auth extends StatelessWidget {
                             }
                           },
                           child: Container(
-                            width: 100,
-                            height: 100,
+                            width: 200,
+                            height: 50,
                             decoration: const BoxDecoration(
                               borderRadius: BorderRadius.all(
                                 Radius.circular(10),
@@ -92,7 +103,7 @@ class Auth extends StatelessWidget {
                               color: Colors.white,
                               image: DecorationImage(
                                 image: AssetImage('assets/images/google.png'),
-                                fit: BoxFit.cover,
+                                //fit: BoxFit.cover,
                               ),
                             ),
                           ),
