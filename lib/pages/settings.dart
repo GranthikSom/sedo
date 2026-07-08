@@ -88,13 +88,14 @@ class SettingsPage extends StatelessWidget {
                     child: GestureDetector(
                       onTap: () async {
                         await AuthService().signOut();
-                        Navigator.pop(context);
-                        Navigator.pushReplacement(
-                          context,
-                          MaterialPageRoute(builder: (context) => const Auth()),
+
+                        if (!context.mounted) return;
+
+                        Navigator.of(context).pushAndRemoveUntil(
+                          MaterialPageRoute(builder: (_) => const Auth()),
+                          (route) => false,
                         );
                       },
-
                       child: Container(
                         height: 80,
                         decoration: BoxDecoration(
