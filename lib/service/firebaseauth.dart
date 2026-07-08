@@ -7,12 +7,11 @@ class AuthService {
 
   Future<UserCredential?> signInWithGoogle() async {
     try {
-      await _googleSignIn.initialize();
-
       final GoogleSignInAccount googleUser = await _googleSignIn.authenticate();
 
       final GoogleSignInAuthentication googleAuth = googleUser.authentication;
 
+      // ponytail: only idToken available in google_sign_in 7.x accessToken is separate
       final credential = GoogleAuthProvider.credential(
         idToken: googleAuth.idToken,
       );
