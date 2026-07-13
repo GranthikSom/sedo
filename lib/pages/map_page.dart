@@ -27,6 +27,15 @@ class _MapPageState extends State<MapPage> {
 
   Ticker? _ticker;
 
+  // ponytail: rider at ~30% from left edge, tweak -w * 0.xx to reposition
+  LatLng _offsetCenter(LatLng rider) {
+    final camera = _mapController.camera;
+    final w = camera.nonRotatedSize.width;
+    if (w.isInfinite || w.isNegative) return rider;
+    final p = camera.projectAtZoom(rider, camera.zoom);
+    return camera.unprojectAtZoom(p + Offset(-w * 0.20, 0), camera.zoom);
+  }
+
   double _getZoom(double speed) {
     if (speed < 20) return 18;
     if (speed < 50) return 17;
@@ -38,20 +47,20 @@ class _MapPageState extends State<MapPage> {
     _filteredHeading = (_filteredHeading * 0.92) + (heading * 0.08);
 
     if (!_mapInitialized) {
-      _mapController.move(riderLocation, _getZoom(speed));
+      _mapController.move(_offsetCenter(riderLocation), _getZoom(speed));
       _mapController.rotate(_filteredHeading);
 
       _mapInitialized = true;
       return;
     }
 
-    _targetCenter = riderLocation;
+    _targetCenter = _offsetCenter(riderLocation);
 
     if (_followUser) {
       final targetZoom = _getZoom(speed);
 
       if ((_mapController.camera.zoom - targetZoom).abs() > 0.1) {
-        _mapController.move(_mapController.camera.center, targetZoom);
+        _mapController.move(_offsetCenter(riderLocation), targetZoom);
       }
 
       _mapController.rotate(_filteredHeading);
