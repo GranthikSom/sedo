@@ -49,6 +49,7 @@ class Auth extends StatelessWidget {
 
                           if (userCredential != null) {
                             if (!context.mounted) return;
+                            
                             Navigator.pushReplacement(
                               context,
                               MaterialPageRoute(

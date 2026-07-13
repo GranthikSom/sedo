@@ -6,6 +6,7 @@ import 'package:provider/provider.dart';
 import 'package:sedo/firebase_options.dart' show DefaultFirebaseOptions;
 import 'package:sedo/pages/auth.dart';
 import 'package:sedo/pages/first.dart';
+import 'package:sedo/pages/homepage.dart' show Homepage;
 import 'package:sedo/service/gps_provider.dart';
 import 'package:sedo/themes/theme_provider.dart';
 import 'package:wakelock_plus/wakelock_plus.dart';
@@ -74,7 +75,7 @@ class MyApp extends StatelessWidget {
 
           // User logged in
           if (snapshot.hasData) {
-            return const firstpage();
+            return const Homepage();
           }
 
           // User not logged in

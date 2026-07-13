@@ -181,7 +181,7 @@ class _MapPageState extends State<MapPage> {
               ),
 
               Positioned(
-                right: 16,
+                left: 16,
                 bottom: 16,
                 child: FloatingActionButton(
                   backgroundColor: Theme.of(
