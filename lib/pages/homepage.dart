@@ -1,15 +1,7 @@
-// ignore_for_file: unused_import, camel_case_types
-
-import 'dart:io';
-
 import 'package:flutter/material.dart';
-import 'package:sedo/models/box.dart';
 import 'package:sedo/models/drawer_page.dart';
 import 'package:sedo/pages/map_page.dart';
-
 import 'package:sedo/pages/speedometer.dart';
-import 'package:sedo/models/future.dart';
-
 import 'musicplayer_page.dart' show MusicPlayerPage;
 
 class Homepage extends StatefulWidget {
@@ -30,10 +22,10 @@ class _HomepageState extends State<Homepage> {
     });
   }
 
+  // ponytail: index 1 kept for drawer parity, remove when drawer indices are fixed
   final List<Widget> pages = [
     SpeedometerPage(),
-    // MapSettings(),
-    Future(),
+    SpeedometerPage(),
     MusicPlayerPage(),
   ];
 
@@ -48,22 +40,7 @@ class _HomepageState extends State<Homepage> {
 
       body: Stack(
         children: [
-          Expanded(
-            child: Container(
-              decoration: BoxDecoration(
-                boxShadow: [
-                  BoxShadow(
-                    color: Theme.of(
-                      context,
-                    ).colorScheme.inversePrimary.withOpacity(0.7),
-                    blurRadius: 20,
-                    offset: const Offset(1, 1),
-                  ),
-                ],
-              ),
-              child: MapPage(),
-            ),
-          ),
+          Positioned.fill(child: MapPage()),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
@@ -86,27 +63,23 @@ class _HomepageState extends State<Homepage> {
             ],
           ),
 
-          // iOS only for testing
-          if (Platform.isAndroid)
-            Positioned(
-              width: 100,
-              height: 100,
-
-              child: FloatingActionButton(
-                backgroundColor: Colors.transparent,
-                elevation: 0,
-                highlightElevation: 0,
-                //mini: true,
-                onPressed: () {
-                  _scaffoldKey.currentState?.openDrawer();
-                },
-                child: Icon(
-                  Icons.menu,
-                  size: 40,
-                  color: Theme.of(context).colorScheme.inversePrimary,
-                ),
+          Positioned(
+            width: 100,
+            height: 100,
+            child: FloatingActionButton(
+              backgroundColor: Colors.transparent,
+              elevation: 0,
+              highlightElevation: 0,
+              onPressed: () {
+                _scaffoldKey.currentState?.openDrawer();
+              },
+              child: Icon(
+                Icons.menu,
+                size: 40,
+                color: Theme.of(context).colorScheme.inversePrimary,
               ),
             ),
+          ),
         ],
       ),
     );

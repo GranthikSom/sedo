@@ -27,20 +27,6 @@ class _MapPageState extends State<MapPage> {
 
   Ticker? _ticker;
 
-  LatLng _getNavigationCenter(LatLng rider, double heading, double speed) {
-    final offsetMeters = speed < 5 ? 0.0 : (speed * 2).clamp(0.0, 200.0);
-
-    final bearing = (heading + 180) * math.pi / 180;
-
-    final dLat = (offsetMeters / 111111) * math.cos(bearing);
-
-    final dLng =
-        (offsetMeters / (111111 * math.cos(rider.latitude * math.pi / 180))) *
-        math.sin(bearing);
-
-    return LatLng(rider.latitude + dLat, rider.longitude + dLng);
-  }
-
   double _getZoom(double speed) {
     if (speed < 20) return 18;
     if (speed < 50) return 17;
@@ -51,20 +37,15 @@ class _MapPageState extends State<MapPage> {
   void _updateCameraTarget(LatLng riderLocation, double heading, double speed) {
     _filteredHeading = (_filteredHeading * 0.92) + (heading * 0.08);
 
-    _targetCenter = _getNavigationCenter(
-      riderLocation,
-      _filteredHeading,
-      speed,
-    );
-
     if (!_mapInitialized) {
-      _mapController.move(_targetCenter!, _getZoom(speed));
-
+      _mapController.move(riderLocation, _getZoom(speed));
       _mapController.rotate(_filteredHeading);
 
       _mapInitialized = true;
       return;
     }
+
+    _targetCenter = riderLocation;
 
     if (_followUser) {
       final targetZoom = _getZoom(speed);

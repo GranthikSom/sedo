@@ -36,7 +36,7 @@ dependencies:
   geolocator: ^14.0.2
   google_fonts: ^8.1.0
   flutter_map: ^8.2.1
-  latlong2: ^0.9.1
+  latlong2: ^0.10.1
   wakelock_plus: ^1.4.0
   firebase_core: ^4.11.0
   google_sign_in: ^7.2.0
