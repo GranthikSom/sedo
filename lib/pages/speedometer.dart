@@ -22,11 +22,15 @@ class SpeedometerPage extends StatelessWidget {
               // Dynamically scale speed text size based on height to prevent layout overflows
               final speedFontSize = height * 0.26;
 
-              final isSpeeding = speedProvider.speed >= speedProvider.overspeedWarning;
+              final isSpeeding =
+                  speedProvider.speed >= speedProvider.overspeedWarning;
               final primaryColor = isSpeeding ? Colors.redAccent : cs.tertiary;
 
               return Padding(
-                padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+                padding: const EdgeInsets.symmetric(
+                  vertical: 8,
+                  horizontal: 16,
+                ),
                 child: Column(
                   children: [
                     // ── TOP BAR (COMBINED CONTROL BUTTON) ────────────────────
@@ -54,7 +58,9 @@ class SpeedometerPage extends StatelessWidget {
                           if (!context.mounted) return;
                           ScaffoldMessenger.of(context).showSnackBar(
                             SnackBar(
-                              content: const Text('Ride stats saved to cloud and reset'),
+                              content: const Text(
+                                'Ride stats saved to cloud and reset',
+                              ),
                               behavior: SnackBarBehavior.floating,
                               backgroundColor: cs.secondary,
                               duration: const Duration(seconds: 2),
@@ -62,15 +68,28 @@ class SpeedometerPage extends StatelessWidget {
                           );
                         },
                         style: OutlinedButton.styleFrom(
-                          foregroundColor: speedProvider.isPaused ? Colors.orange : Colors.blue,
+                          foregroundColor: speedProvider.isPaused
+                              ? Colors.orange
+                              : Colors.blue,
                           side: BorderSide(
-                            color: (speedProvider.isPaused ? Colors.orange : Colors.blue).withOpacity(0.3),
+                            color:
+                                (speedProvider.isPaused
+                                        ? Colors.orange
+                                        : Colors.blue)
+                                    .withOpacity(0.3),
                           ),
-                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-                          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 16,
+                            vertical: 8,
+                          ),
                         ),
                         icon: Icon(
-                          speedProvider.isPaused ? Icons.play_arrow : Icons.pause,
+                          speedProvider.isPaused
+                              ? Icons.play_arrow
+                              : Icons.pause,
                           size: 16,
                         ),
                         label: Text(
@@ -100,7 +119,9 @@ class SpeedometerPage extends StatelessWidget {
                                 FittedBox(
                                   fit: BoxFit.scaleDown,
                                   child: Padding(
-                                    padding: const EdgeInsets.symmetric(horizontal: 20),
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: 20,
+                                    ),
                                     child: Text(
                                       speedProvider.speed.toStringAsFixed(0),
                                       style: GoogleFonts.orbitron(
@@ -163,7 +184,7 @@ class _BlinkingCircularRingState extends State<_BlinkingCircularRing>
     super.initState();
     _controller = AnimationController(
       vsync: this,
-      duration: const Duration(milliseconds: 500),
+      duration: const Duration(milliseconds: 300),
     );
 
     _colorAnimation = ColorTween(
@@ -209,10 +230,7 @@ class _BlinkingCircularRingState extends State<_BlinkingCircularRing>
         return Container(
           decoration: BoxDecoration(
             shape: BoxShape.circle,
-            border: Border.all(
-              color: ringColor,
-              width: 6.0,
-            ),
+            border: Border.all(color: ringColor, width: 6.0),
           ),
           padding: const EdgeInsets.all(12),
           child: widget.child,
