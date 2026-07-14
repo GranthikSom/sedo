@@ -22,7 +22,6 @@ class _MusicPlayerPageState extends State<MusicPlayerPage>
 
   Timer? _pollTimer;
   late AnimationController _pulseController;
-  late Animation<double> _pulseAnimation;
 
   @override
   void initState() {
@@ -31,9 +30,6 @@ class _MusicPlayerPageState extends State<MusicPlayerPage>
     _pulseController = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 1200),
-    );
-    _pulseAnimation = Tween<double>(begin: 0.85, end: 1.0).animate(
-      CurvedAnimation(parent: _pulseController, curve: Curves.easeInOut),
     );
 
     _controller.setOnNowPlayingChanged(_fetchNowPlaying);
@@ -103,7 +99,7 @@ class _MusicPlayerPageState extends State<MusicPlayerPage>
           child: Center(
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 32),
-              child: _loading ? _buildLoadingState() : _buildContent(),
+              child: _loading ? _buildLoadingState() : _buildContent(context),
             ),
           ),
         ),
@@ -115,7 +111,9 @@ class _MusicPlayerPageState extends State<MusicPlayerPage>
     return const Center(child: CircularProgressIndicator());
   }
 
-  Widget _buildContent() {
+  Widget _buildContent(BuildContext context) {
+    final cs = Theme.of(context).colorScheme;
+
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
@@ -123,8 +121,8 @@ class _MusicPlayerPageState extends State<MusicPlayerPage>
         Text(
           _title,
           textAlign: TextAlign.center,
-          style: const TextStyle(
-            color: Colors.white,
+          style: TextStyle(
+            color: cs.tertiary,
             fontSize: 22,
             fontWeight: FontWeight.bold,
           ),
@@ -133,7 +131,10 @@ class _MusicPlayerPageState extends State<MusicPlayerPage>
         Text(
           _artist,
           textAlign: TextAlign.center,
-          style: const TextStyle(color: Color(0xFF888888), fontSize: 15),
+          style: TextStyle(
+            color: cs.inversePrimary.withOpacity(0.6),
+            fontSize: 15,
+          ),
         ),
         const SizedBox(height: 40),
         Row(
@@ -141,35 +142,36 @@ class _MusicPlayerPageState extends State<MusicPlayerPage>
           children: [
             IconButton(
               iconSize: 40,
-              color: Colors.white,
+              color: cs.tertiary,
               onPressed: _handlePrevious,
               icon: const Icon(Icons.skip_previous),
             ),
             const SizedBox(width: 20),
-            //ScaleTransition(
-            // scale: _pulseAnimation,
-            // child:
-            GestureDetector(
-              onTap: _handlePlayPause,
-              child: Container(
-                width: 76,
-                height: 76,
-                decoration: const BoxDecoration(
-                  color: Colors.white,
-                  shape: BoxShape.circle,
-                ),
-                child: Icon(
-                  _isPlaying ? Icons.pause_rounded : Icons.play_arrow_rounded,
-                  color: Colors.black,
-                  size: 40,
+            ScaleTransition(
+              scale: Tween<double>(begin: 0.92, end: 1.0).animate(
+                CurvedAnimation(parent: _pulseController, curve: Curves.easeInOut),
+              ),
+              child: GestureDetector(
+                onTap: _handlePlayPause,
+                child: Container(
+                  width: 76,
+                  height: 76,
+                  decoration: BoxDecoration(
+                    color: cs.tertiary,
+                    shape: BoxShape.circle,
+                  ),
+                  child: Icon(
+                    _isPlaying ? Icons.pause_rounded : Icons.play_arrow_rounded,
+                    color: cs.surface,
+                    size: 40,
+                  ),
                 ),
               ),
             ),
-            // ),
             const SizedBox(width: 20),
             IconButton(
               iconSize: 40,
-              color: Colors.white,
+              color: cs.tertiary,
               onPressed: _handleNext,
               icon: const Icon(Icons.skip_next),
             ),

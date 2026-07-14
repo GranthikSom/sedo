@@ -7,6 +7,8 @@ class Auth extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final cs = Theme.of(context).colorScheme;
+
     return Scaffold(
       body: Stack(
         children: [
@@ -15,81 +17,107 @@ class Auth extends StatelessWidget {
             child: Image.asset('assets/images/bg.jpg', fit: BoxFit.cover),
           ),
 
-          // Dark overlay (optional, makes text easier to read)
+          // Dark overlay for readability
+          Positioned.fill(
+            child: Container(color: Colors.black.withOpacity(0.45)),
+          ),
 
           // Center Content
           Center(
             child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  // Logo
-                  Image.asset('assets/images/logo.png', width: 300),
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                // Logo
+                Image.asset('assets/images/logo.png', width: 300),
 
-                  Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Container(
-                        width: 200,
+                const SizedBox(height: 24),
+
+                // Sign-in buttons
+                Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    // Apple Sign-In button
+                    Container(
+                      width: 220,
+                      height: 50,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(12),
+                        color: Colors.white,
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withOpacity(0.15),
+                            blurRadius: 8,
+                            offset: const Offset(0, 2),
+                          ),
+                        ],
+                        image: const DecorationImage(
+                          image: AssetImage('assets/images/apple.png'),
+                        ),
+                      ),
+                    ),
+
+                    const SizedBox(height: 12),
+
+                    // Google Sign-In button
+                    GestureDetector(
+                      onTap: () async {
+                        final userCredential = await AuthService()
+                            .signInWithGoogle();
+
+                        if (userCredential != null) {
+                          if (!context.mounted) return;
+                          
+                          Navigator.pushReplacement(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => const firstpage(),
+                            ),
+                          );
+                        } else {
+                          if (!context.mounted) return;
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: const Text('Sign in failed'),
+                              behavior: SnackBarBehavior.floating,
+                              backgroundColor: cs.secondary,
+                            ),
+                          );
+                        }
+                      },
+                      child: Container(
+                        width: 220,
                         height: 50,
-                        decoration: const BoxDecoration(
-                          borderRadius: BorderRadius.all(
-                            Radius.circular(10),
-                          ),
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(12),
                           color: Colors.white,
-                          image: DecorationImage(
-                            image: AssetImage('assets/images/apple.png'),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withOpacity(0.15),
+                              blurRadius: 8,
+                              offset: const Offset(0, 2),
+                            ),
+                          ],
+                          image: const DecorationImage(
+                            image: AssetImage('assets/images/google.png'),
                           ),
                         ),
                       ),
-                      const SizedBox(height: 10),
-                      GestureDetector(
-                        onTap: () async {
-                          final userCredential = await AuthService()
-                              .signInWithGoogle();
+                    ),
+                  ],
+                ),
 
-                          if (userCredential != null) {
-                            if (!context.mounted) return;
-                            
-                            Navigator.pushReplacement(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => const firstpage(),
-                              ),
-                            );
-                          } else {
-                            if (!context.mounted) return;
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(
-                                content: Text('Sign in failed'),
-                              ),
-                            );
-                          }
-                        },
-                        child: Container(
-                          width: 200,
-                          height: 50,
-                          decoration: const BoxDecoration(
-                            borderRadius: BorderRadius.all(
-                              Radius.circular(10),
-                            ),
-                            color: Colors.white,
-                            image: DecorationImage(
-                              image: AssetImage('assets/images/google.png'),
-                              //fit: BoxFit.cover,
-                            ),
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 10),
+                const SizedBox(height: 16),
 
-                  const Text(
-                    'Log in with your account',
-                    textAlign: TextAlign.center,
-                    style: TextStyle(color: Colors.white70, fontSize: 10),
+                Text(
+                  'Log in with your account',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    color: cs.inversePrimary.withOpacity(0.7),
+                    fontSize: 12,
+                    letterSpacing: 0.5,
                   ),
-                ],
+                ),
+              ],
             ),
           ),
         ],

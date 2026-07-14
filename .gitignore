@@ -48,3 +48,5 @@ app.*.map.json
 **/android/app/src/profile/AndroidManifest.xml
 **/sedo/ios
 **/sedo/android
+
+agent.md

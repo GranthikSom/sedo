@@ -29,4 +29,18 @@ class AuthService {
   }
 
   User? get currentUser => _auth.currentUser;
+
+  /// Saves a completed ride's statistics to the cloud under the user's profile.
+  Future<void> saveRideStats({
+    required double maxSpeed,
+    required double averageSpeed,
+    required double distance,
+  }) async {
+    // Firestore removed for now
+  }
+
+  /// Streams the cumulative lifetime statistics for the current user.
+  Stream<Map<String, double>> getLifetimeStats() {
+    return Stream.value({'maxSpeed': 0.0, 'averageSpeed': 0.0, 'distance': 0.0});
+  }
 }

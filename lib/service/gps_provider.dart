@@ -25,9 +25,18 @@ class SpeedProvider extends ChangeNotifier {
 
   bool _isPaused = false;
 
+  double _overspeedWarning = 80.0;
+
   // ==========================
   // GETTERS
   // ==========================
+
+  double get overspeedWarning => _overspeedWarning;
+
+  void setOverspeedWarning(double value) {
+    _overspeedWarning = value;
+    notifyListeners();
+  }
 
   double get speed => _speed;
 

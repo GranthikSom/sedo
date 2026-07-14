@@ -22,15 +22,16 @@ class _HomepageState extends State<Homepage> {
     });
   }
 
-  // ponytail: index 1 kept for drawer parity, remove when drawer indices are fixed
   final List<Widget> pages = [
-    SpeedometerPage(),
-    SpeedometerPage(),
-    MusicPlayerPage(),
+    const SpeedometerPage(),
+    const SpeedometerPage(), // ponytail: index 1 kept for drawer parity, remove when drawer indices are fixed
+    const MusicPlayerPage(),
   ];
 
   @override
   Widget build(BuildContext context) {
+    final cs = Theme.of(context).colorScheme;
+
     return Scaffold(
       key: _scaffoldKey,
       extendBody: true,
@@ -40,43 +41,61 @@ class _HomepageState extends State<Homepage> {
 
       body: Stack(
         children: [
-          Positioned.fill(child: MapPage()),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [
-              Expanded(child: SizedBox()),
-              Expanded(
-                child: Container(
-                  decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                      begin: Alignment.centerLeft,
-                      end: Alignment.centerRight,
-                      colors: [
-                        Colors.transparent,
-                        Theme.of(context).colorScheme.tertiary.withOpacity(0.9),
-                      ],
+          const Positioned.fill(child: MapPage()),
+
+          // Non-interactive gradient overlay above the map (theme-aware)
+          Positioned.fill(
+            child: IgnorePointer(
+              child: Row(
+                children: [
+                  const Expanded(child: SizedBox()),
+                  Expanded(
+                    child: Container(
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          begin: Alignment.centerLeft,
+                          end: Alignment.centerRight,
+                          colors: [
+                            Colors.transparent,
+                            cs.surface.withOpacity(0.92),
+                          ],
+                        ),
+                      ),
                     ),
                   ),
-                  child: pages[currentIndex],
-                ),
+                ],
               ),
-            ],
+            ),
           ),
 
+          // Interactive UI page layer
+          Positioned.fill(
+            child: Row(
+              children: [
+                const Expanded(child: SizedBox()),
+                Expanded(child: pages[currentIndex]),
+              ],
+            ),
+          ),
+
+          // Drawer menu button
           Positioned(
-            width: 100,
-            height: 100,
-            child: FloatingActionButton(
-              backgroundColor: Colors.transparent,
-              elevation: 0,
-              highlightElevation: 0,
-              onPressed: () {
-                _scaffoldKey.currentState?.openDrawer();
-              },
-              child: Icon(
-                Icons.menu,
-                size: 40,
-                color: Theme.of(context).colorScheme.inversePrimary,
+            top: MediaQuery.of(context).padding.top + 8,
+            left: 12,
+            child: GestureDetector(
+              onTap: () => _scaffoldKey.currentState?.openDrawer(),
+              child: Container(
+                width: 44,
+                height: 44,
+                decoration: BoxDecoration(
+                  color: cs.surface.withOpacity(0.5),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Icon(
+                  Icons.menu,
+                  size: 26,
+                  color: cs.tertiary,
+                ),
               ),
             ),
           ),
