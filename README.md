@@ -1,96 +1,71 @@
-# Sedo
+# Sedo: Advanced Motorcycle Dashboard
 
-![Release](https://img.shields.io/github/v/release/GranthikSom/sedo?include_prereleases)
+Sedo is a modern, landscape-first Flutter application designed to serve as a comprehensive dashboard for your motorcycle. Built to run on a mounted tablet or smartphone, it provides riders with everything they need on the road—from turn-by-turn navigation and live speed tracking to music controls and offline map capabilities.
 
-**Sedo** is an open-source motorcycle dashboard application built with Flutter for Android and iOS.
+![Hero Screenshot Placeholder](path/to/hero_screenshot.png)
 
-Designed specifically for riders, Sedo transforms a smartphone into a motorcycle-friendly dashboard featuring real-time GPS speed monitoring, navigation, ride statistics, and system-wide media controls in a clean, distraction-free interface.
+## 🌟 Key Features
 
-Unlike traditional motorcycle infotainment systems, Sedo aims to provide essential riding information using only a smartphone, making advanced dashboard functionality accessible without expensive hardware.
+### 🗺️ Turn-by-Turn Navigation & Offline Maps
+* **Live Navigation:** Complete turn-by-turn routing using OSRM, featuring maneuver instructions, distance-to-turn, ETA, and arrival time.
+* **Smart Camera Tracking:** The map dynamically centers on the rider's position while automatically adjusting zoom based on speed.
+* **Destination Search:** Search for places online (powered by Nominatim) or drop a pin directly on the map.
+* **Offline Maps:** Download specific regions (5km, 15km, or 50km radiuses) for completely offline map tile rendering.
 
-The project is actively developed and tested in real-world riding conditions, with a focus on usability, reliability, and rider safety.
+![Map & Navigation Screenshot Placeholder](path/to/map_screenshot.png)
 
----
+### 🚀 Digital Speedometer
+* Real-time GPS-based speed tracking.
+* Smooth, high-contrast UI designed for quick glances while riding.
+* Toggleable metric and imperial units (km/h vs mph).
 
-<img src="readme_assets/test.gif" alt="Sedo Demo" width="800">
+![Speedometer Screenshot Placeholder](path/to/speedometer_screenshot.png)
 
----
+### 🎵 Smart Music Integration
+* Control your device's media playback directly from the dashboard.
+* **Auto Pop-out Mini Player:** A sleek mini player automatically slides up on the map screen the moment a track starts playing, allowing you to pause or skip without leaving the map.
+* Dedicated fullscreen music player page.
 
-## Current Features
+![Music Player Screenshot Placeholder](path/to/music_screenshot.png)
 
-| Feature                | Status |
-| ---------------------- | ------ |
-| GPS Speedometer        | ✅      |
-| Live Navigation Map    | ✅      |
-| Ride Distance Tracking | ✅      |
-| Average Speed Tracking | ✅      |
-| Maximum Speed Tracking | ✅      |
-| Ride Timer             | ✅      |
-| Dark / Light Themes    | ✅      |
-| Android Media Controls | ✅      |
-| iOS Media Controls     | ✅      |
-| Cross-Platform Support | ✅      |
+### 🌤️ Interactive Dashboard & UI
+* **Landscape Optimized:** Immersive, sticky-fullscreen UI designed specifically for landscape mounting.
+* **Dark Mode & Themes:** Built-in dynamic theme support with high-contrast elements for daytime and night riding.
+* **Quick Access Drawer:** Easy swipe access to switch between the Home dashboard, Map, Speedo, Gallery, and Settings.
 
-## Key Features
+![Home Dashboard Screenshot Placeholder](path/to/home_screenshot.png)
 
-### Real-Time Speedometer
+### 🔐 Firebase Authentication
+* Secure login system powered by Firebase.
+* Supports Google Sign-In and standard email authentication.
 
-GPS-based speed tracking optimized for motorcycle riding.
+## 📸 Media Gallery
+* Built-in gallery viewer to quickly check out photos saved to the device during your ride.
 
-### Live Navigation Map
+![Gallery Screenshot Placeholder](path/to/gallery_screenshot.png)
 
-Rotating rider-focused map with smooth camera following and automatic zoom adjustments based on speed.
+## ⚙️ Settings & Customization
+* Customize distance units (Kilometers / Miles).
+* Customize speed units (km/h / mph).
+* Manage offline map cache (view size, clear cache, download new regions).
+* Toggle route line visibility and UI components.
 
-### Ride Statistics
-
-Track:
-
-* Current Speed
-* Maximum Speed
-* Average Speed
-* Distance Travelled
-* Ride Duration
-
-### Universal Media Controls
-
-Control media playback from supported music applications directly within Sedo.
-
-### Rider-Focused Interface
-
-* Large readable typography
-* Landscape-first design
-* Dark and light themes
-* Optimized for phone mounts and motorcycle use
-
-## Project Status
-
-Sedo is currently in active development and has been tested on real motorcycle rides.
-
-## Roadmap
-
-### Completed
-
-* [x] GPS Speedometer
-* [x] Ride Statistics
-* [x] Distance Tracking
-* [x] Live Navigation Map
-* [x] Dynamic Map Zoom
-* [x] Dark / Light Themes
-* [x] Android Media Controls
-* [x] iOS Media Controls
-
-### Planned
-
-* [ ] Album Art & Metadata Display
-* [ ] Offline Maps
-* [ ] GPX Export
-* [ ] Ride History
-* [ ] Nearby Fuel Stations
-* [ ] Nearby Repair Shops
-* [ ] Turn-by-Turn Navigation
-* [ ] Bluetooth Helmet Integration
-* [ ] Weather Integration
+![Settings Screenshot Placeholder](path/to/settings_screenshot.png)
 
 ---
 
-### Ride Smarter. Ride Safer. Ride with Sedo.
+## 🛠️ Tech Stack & Architecture
+* **Framework:** Flutter (Dart)
+* **Maps:** `flutter_map` with a custom-built file caching provider (`TileCache`).
+* **Routing:** OSRM (Open Source Routing Machine).
+* **Geocoding:** Nominatim API.
+* **Backend:** Firebase Auth.
+* **State Management:** Provider (MultiProvider architecture).
+
+## 🚀 Getting Started
+
+1. Ensure you have Flutter ^3.10.4 installed.
+2. Clone the repository.
+3. Run `flutter pub get`.
+4. Ensure your `firebase_options.dart` is correctly configured for your Firebase project.
+5. Build and run: `flutter run` (Best experienced on a physical device in landscape mode).

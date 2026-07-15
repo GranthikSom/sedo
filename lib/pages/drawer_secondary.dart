@@ -2,7 +2,6 @@
 
 import 'package:flutter/material.dart';
 import 'package:sedo/models/box.dart';
-import 'package:sedo/pages/first.dart' show firstpage;
 import 'package:sedo/pages/homepage.dart' show Homepage;
 
 class DrawerSecondary extends StatelessWidget {
