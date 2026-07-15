@@ -9,6 +9,7 @@ import 'package:sedo/pages/auth.dart';
 import 'package:sedo/pages/drawer_secondary.dart' show DrawerSecondary;
 import 'package:sedo/service/firebaseauth.dart';
 import 'package:sedo/service/gps_provider.dart';
+import 'package:sedo/service/tile_cache.dart';
 import 'package:sedo/themes/theme_provider.dart' show ThemeProvider;
 
 // ═══════════════════════════════════════════════════════════════════════════════
@@ -191,6 +192,23 @@ class _SettingsPageState extends State<SettingsPage> {
   String _speedUnit = 'KM/H';
   String _distanceUnit = 'Kilometers';
 
+  int _cacheSizeMB = 0;
+  int _tileCount = 0;
+  bool _isDownloading = false;
+  double _downloadProgress = 0.0;
+
+  @override
+  void initState() {
+    super.initState();
+    _refreshCacheStats();
+  }
+
+  Future<void> _refreshCacheStats() async {
+    final size = await OfflineMapManager.getCacheSizeMB();
+    final count = await OfflineMapManager.getTileCount();
+    if (mounted) setState(() { _cacheSizeMB = size; _tileCount = count; });
+  }
+
   @override
   Widget build(BuildContext context) {
     final cs = Theme.of(context).colorScheme;
@@ -368,24 +386,94 @@ class _SettingsPageState extends State<SettingsPage> {
             activeColor: Colors.blue,
           ),
         ),
+        if (_isDownloading)
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+            child: LinearProgressIndicator(value: _downloadProgress),
+          ),
         SettingTile(
           title: 'Downloaded Regions',
-          subtitle: 'None',
+          subtitle: '$_tileCount tiles cached',
           icon: Icons.sd_storage_outlined,
-          onTap: () => _showPlaceholder('Downloaded Regions'),
+          onTap: () => _showDownloadDialog(),
         ),
         SettingTile(
           title: 'Map Cache Size',
-          subtitle: '— MB',
+          subtitle: '$_cacheSizeMB MB',
           icon: Icons.cached_outlined,
         ),
         _SettingButton(
           label: 'Clear Map Cache',
           icon: Icons.delete_sweep_outlined,
-          onTap: () => _showPlaceholder('Clear Map Cache'),
+          onTap: () async {
+            await OfflineMapManager.clearCache();
+            await _refreshCacheStats();
+            if (mounted) ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text('Map cache cleared'), behavior: SnackBarBehavior.floating),
+            );
+          },
         ),
       ],
     );
+  }
+
+  void _showDownloadDialog() {
+    final speedProvider = Provider.of<SpeedProvider>(context, listen: false);
+    final lat = speedProvider.latitude;
+    final lng = speedProvider.longitude;
+
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Text('Download Offline Maps'),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            ListTile(
+              title: const Text('5 km radius'),
+              onTap: () {
+                Navigator.pop(ctx);
+                _startDownload(lat, lng, radiusKm: 5, minZoom: 13, maxZoom: 16);
+              },
+            ),
+            ListTile(
+              title: const Text('15 km radius'),
+              onTap: () {
+                Navigator.pop(ctx);
+                _startDownload(lat, lng, radiusKm: 15, minZoom: 11, maxZoom: 15);
+              },
+            ),
+            ListTile(
+              title: const Text('50 km radius'),
+              onTap: () {
+                Navigator.pop(ctx);
+                _startDownload(lat, lng, radiusKm: 50, minZoom: 10, maxZoom: 14);
+              },
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Future<void> _startDownload(
+    double lat, double lng, {
+    required double radiusKm,
+    required int minZoom,
+    required int maxZoom,
+  }) async {
+    setState(() { _isDownloading = true; _downloadProgress = 0.0; });
+    await for (final progress in OfflineMapManager.downloadRegion(
+      lat: lat,
+      lng: lng,
+      radiusKm: radiusKm,
+      minZoom: minZoom,
+      maxZoom: maxZoom,
+    )) {
+      if (mounted) setState(() => _downloadProgress = progress.percent);
+    }
+    if (mounted) setState(() => _isDownloading = false);
+    await _refreshCacheStats();
   }
 
   Widget _buildRideSection(ColorScheme cs, SpeedProvider speedProvider) {

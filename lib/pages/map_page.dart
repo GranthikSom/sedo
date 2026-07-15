@@ -7,7 +7,16 @@ import 'package:geolocator/geolocator.dart' show Geolocator;
 import 'package:latlong2/latlong.dart';
 import 'package:provider/provider.dart';
 import 'package:sedo/service/gps_provider.dart';
+import 'package:sedo/service/tile_cache.dart';
 import 'package:sedo/themes/theme_provider.dart';
+import 'package:sedo/service/map_settings_provider.dart';
+import 'package:sedo/navigation/navigation_session_provider.dart';
+import 'package:sedo/navigation/navigation_search_provider.dart';
+import 'package:sedo/navigation/navigation_provider.dart';
+import 'package:sedo/navigation/destination_model.dart';
+import 'package:sedo/navigation/search_location.dart';
+import 'package:sedo/service/music_provider.dart';
+import 'dart:async';
 
 class MapPage extends StatefulWidget {
   const MapPage({super.key});
@@ -18,6 +27,7 @@ class MapPage extends StatefulWidget {
 
 class _MapPageState extends State<MapPage> {
   final MapController _mapController = MapController();
+  CachingTileProvider? _tileProvider;
 
   bool _mapInitialized = false;
   bool _followUser = true;
@@ -47,17 +57,26 @@ class _MapPageState extends State<MapPage> {
   LatLng? _targetCenter;
   Ticker? _ticker;
 
+  // Music Player State
+  final MediaController _mediaController = MediaController();
+  String _musicTitle = '—';
+  bool _isMusicPlaying = false;
+  bool _showMusicPlayer = false;
+  Timer? _musicPollTimer;
+
   // ponytail: rider at ~30% from left edge and ~70% from top (lower on screen)
   LatLng _offsetCenter(LatLng rider) {
     try {
       final camera = _mapController.camera;
       final w = camera.nonRotatedSize.width;
       final h = camera.nonRotatedSize.height;
-      if (w.isInfinite || w.isNegative || h.isInfinite || h.isNegative)
+      if (w.isInfinite || w.isNegative || h.isInfinite || h.isNegative) {
         return rider;
+      }
+      // ponytail: rider centered in left map-half (~25% from left edge of full screen)
       final p = camera.projectAtZoom(rider, camera.zoom);
       return camera.unprojectAtZoom(
-        p + Offset(w * 0.14, -h * 0.36),
+        p + Offset(w * 0.25, -h * 0.36),
         camera.zoom,
       );
     } catch (_) {
@@ -151,11 +170,32 @@ class _MapPageState extends State<MapPage> {
     _lastFilteredHeadingTarget = targetHeading;
     _targetZoom = _getZoom(speedKmh);
     _interpolationStartTime = DateTime.now();
+
+    // 5. Update Navigation Progress
+    if (mounted) {
+      final navSession = context.read<NavigationSessionProvider>();
+      final mapPrefs = context.read<MapSettingsProvider>();
+      if (navSession.isActive) {
+        navSession.updateLocation(filteredLatLng, mapPrefs.routingProfile);
+      }
+    }
   }
 
   @override
   void initState() {
     super.initState();
+
+    // ponytail: init tile cache provider; tiles cached as user browses
+    OfflineMapManager.createProvider().then((p) {
+      if (mounted) setState(() => _tileProvider = p);
+    });
+
+    _mediaController.setOnNowPlayingChanged(_fetchNowPlaying);
+    _fetchNowPlaying();
+    _musicPollTimer = Timer.periodic(
+      const Duration(seconds: 10),
+      (_) => _fetchNowPlaying(),
+    );
 
     _ticker = Ticker((_) {
       if (!_mapInitialized) return;
@@ -203,8 +243,22 @@ class _MapPageState extends State<MapPage> {
         }
       }
 
+      // Apply Snapping if Navigation is Active and SnapToRoad is enabled
+      LatLng renderLatLng = currentLatLng;
+      final navSession = Provider.of<NavigationSessionProvider>(
+        context,
+        listen: false,
+      );
+      final mapPrefs = Provider.of<MapSettingsProvider>(context, listen: false);
+
+      if (navSession.isActive &&
+          mapPrefs.snapToRoad &&
+          navSession.snappedLocation != null) {
+        renderLatLng = navSession.snappedLocation!;
+      }
+
       // Update the 60 FPS marker location
-      _smoothLocationNotifier.value = currentLatLng;
+      _smoothLocationNotifier.value = renderLatLng;
 
       // Smooth heading rotation, avoiding 360 wrap jumps
       double headingDiff = _shortestAngleDiff(
@@ -219,9 +273,9 @@ class _MapPageState extends State<MapPage> {
       _smoothHeadingNotifier.value = nextHeading;
 
       // Smooth camera follow
-      if (_followUser) {
+      if (_followUser || mapPrefs.autoCenterMap) {
         try {
-          _targetCenter = _offsetCenter(currentLatLng);
+          _targetCenter = _offsetCenter(renderLatLng);
           final currentCameraCenter = _mapController.camera.center;
 
           double latDiff =
@@ -249,7 +303,9 @@ class _MapPageState extends State<MapPage> {
           }
 
           // ponytail: +30° rightward tilt while moving; remove offset for north-up
-          _mapController.rotate(_smoothHeadingNotifier.value + 30.0);
+          if (mapPrefs.rotateMapWithHeading) {
+            _mapController.rotate(_smoothHeadingNotifier.value + 30.0);
+          }
         } catch (_) {
           // MapController might not be attached to the Map widget yet
         }
@@ -264,12 +320,86 @@ class _MapPageState extends State<MapPage> {
     _ticker?.dispose();
     _smoothLocationNotifier.dispose();
     _smoothHeadingNotifier.dispose();
+    _musicPollTimer?.cancel();
+    _mediaController.dispose();
     super.dispose();
+  }
+
+  Future<void> _fetchNowPlaying() async {
+    final info = await _mediaController.nowPlaying();
+    if (!mounted) return;
+    setState(() {
+      _musicTitle = info['title'] as String? ?? '—';
+      bool wasPlaying = _isMusicPlaying;
+      _isMusicPlaying = info['isPlaying'] as bool? ?? false;
+      if (!wasPlaying && _isMusicPlaying) {
+         _showMusicPlayer = true;
+      }
+    });
+  }
+
+  Future<void> _handlePlayPause() async {
+    await _mediaController.playPause();
+    await _fetchNowPlaying();
+  }
+
+  Future<void> _handleNext() async {
+    await _mediaController.next();
+    await _fetchNowPlaying();
+  }
+
+  void _showSearchSheet(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Theme.of(context).colorScheme.surface,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (ctx) => Padding(
+        padding: EdgeInsets.only(bottom: MediaQuery.of(ctx).viewInsets.bottom),
+        child: FractionallySizedBox(
+          heightFactor: 0.8,
+          child: const _SearchSheet(),
+        ),
+      ),
+    );
+  }
+
+  void _calculateRouteForDestination(
+    BuildContext context,
+    DestinationModel dest,
+  ) async {
+    final navSearch = context.read<NavigationSearchProvider>();
+    final mapPrefs = context.read<MapSettingsProvider>();
+
+    // Set destination first to show loading/card
+    navSearch.setDestination(dest);
+
+    final route = await NavigationProvider.fetchRoute(
+      start: _smoothLocationNotifier.value,
+      destination: dest.location,
+      profile: mapPrefs.routingProfile == 'Driving' ? 'driving' : 'driving',
+    );
+
+    if (route != null && mounted) {
+      navSearch.setDestination(dest.copyWith(route: route));
+      // Zoom out to fit route (simple approach: just zoom out a bit or move to center)
+      _targetZoom = 14.0;
+      _followUser = false;
+    } else if (mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Failed to calculate route.')),
+      );
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     final isDark = context.watch<ThemeProvider>().isDarkMode;
+    final navSession = context.watch<NavigationSessionProvider>();
+    final mapPrefs = context.watch<MapSettingsProvider>();
+    final navSearch = context.watch<NavigationSearchProvider>();
 
     return Consumer<SpeedProvider>(
       builder: (context, gpsProvider, child) {
@@ -343,11 +473,30 @@ class _MapPageState extends State<MapPage> {
                     initialZoom: _targetZoom,
 
                     onPositionChanged: (position, hasGesture) {
-                      if (hasGesture && _followUser) {
+                      if (hasGesture &&
+                          (_followUser || mapPrefs.autoCenterMap)) {
                         setState(() {
                           _followUser = false;
                         });
+                        if (mapPrefs.autoCenterMap) {
+                          mapPrefs.setAutoCenterMap(false);
+                        }
                       }
+                    },
+
+                    onLongPress: (tapPosition, point) {
+                      if (navSession.isActive) return;
+                      _calculateRouteForDestination(
+                        context,
+                        DestinationModel(name: 'Dropped Pin', location: point),
+                      );
+                    },
+                    onTap: (tapPosition, point) {
+                      if (navSession.isActive) return;
+                      _calculateRouteForDestination(
+                        context,
+                        DestinationModel(name: 'Dropped Pin', location: point),
+                      );
                     },
 
                     interactionOptions: const InteractionOptions(
@@ -360,7 +509,68 @@ class _MapPageState extends State<MapPage> {
                       urlTemplate:
                           'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
                       userAgentPackageName: 'com.granthiksom.sedo',
+                      tileProvider: _tileProvider,
                     ),
+
+                    if (navSession.isActive &&
+                        navSession.currentRoute != null &&
+                        mapPrefs.showRouteLine)
+                      PolylineLayer(
+                        polylines: [
+                          Polyline(
+                            points: navSession.currentRoute!.polyline,
+                            strokeWidth: mapPrefs.routeLineWidth,
+                            color: Colors.blue.withOpacity(
+                              mapPrefs.routeTransparency,
+                            ),
+                          ),
+                        ],
+                      )
+                    else if (!navSession.isActive &&
+                        navSearch.selectedDestination?.route != null &&
+                        mapPrefs.showRouteLine)
+                      PolylineLayer(
+                        polylines: [
+                          Polyline(
+                            points:
+                                navSearch.selectedDestination!.route!.polyline,
+                            strokeWidth: mapPrefs.routeLineWidth,
+                            color: Colors.grey.withOpacity(0.8),
+                          ),
+                        ],
+                      ),
+
+                    if (navSession.isActive && navSession.currentRoute != null)
+                      MarkerLayer(
+                        markers: [
+                          Marker(
+                            point: navSession.currentRoute!.destination,
+                            width: 40,
+                            height: 40,
+                            child: const Icon(
+                              Icons.location_on,
+                              color: Colors.red,
+                              size: 40,
+                            ),
+                          ),
+                        ],
+                      )
+                    else if (!navSession.isActive &&
+                        navSearch.selectedDestination != null)
+                      MarkerLayer(
+                        markers: [
+                          Marker(
+                            point: navSearch.selectedDestination!.location,
+                            width: 40,
+                            height: 40,
+                            child: const Icon(
+                              Icons.location_on,
+                              color: Colors.red,
+                              size: 40,
+                            ),
+                          ),
+                        ],
+                      ),
 
                     AnimatedBuilder(
                       animation: Listenable.merge([
@@ -394,28 +604,377 @@ class _MapPageState extends State<MapPage> {
                 ),
               ),
 
+              if (!navSession.isActive)
+                Positioned(
+                  top: MediaQuery.of(context).padding.top + 16,
+                  right: 16,
+                  child: FloatingActionButton(
+                    heroTag: 'searchBtn',
+                    backgroundColor: Theme.of(context).colorScheme.surface,
+                    onPressed: () => _showSearchSheet(context),
+                    child: Icon(
+                      Icons.search,
+                      color: Theme.of(context).colorScheme.tertiary,
+                    ),
+                  ),
+                ),
+
+              if (!navSession.isActive)
+                Positioned(
+                  bottom: 16,
+                  right: 16,
+                  child: FloatingActionButton(
+                    heroTag: 'musicBtn',
+                    backgroundColor: Theme.of(context).colorScheme.surface,
+                    onPressed: () {
+                      setState(() {
+                        _showMusicPlayer = !_showMusicPlayer;
+                      });
+                    },
+                    child: Icon(Icons.music_note, color: Theme.of(context).colorScheme.primary),
+                  ),
+                ),
+
+              if (_showMusicPlayer)
+                Positioned(
+                  bottom: 16,
+                  left: 0,
+                  right: 0,
+                  child: Center(
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                      decoration: BoxDecoration(
+                        color: Theme.of(context).colorScheme.surface,
+                        borderRadius: BorderRadius.circular(30),
+                        boxShadow: [
+                          BoxShadow(color: Colors.black.withOpacity(0.2), blurRadius: 10, offset: const Offset(0, 4)),
+                        ],
+                      ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Icon(Icons.music_note, size: 20, color: Theme.of(context).colorScheme.primary),
+                          const SizedBox(width: 8),
+                          ConstrainedBox(
+                            constraints: const BoxConstraints(maxWidth: 120),
+                            child: Text(
+                              _musicTitle,
+                              style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                          const SizedBox(width: 12),
+                          GestureDetector(
+                            onTap: _handlePlayPause,
+                            child: Container(
+                              padding: const EdgeInsets.all(6),
+                              decoration: BoxDecoration(
+                                color: Theme.of(context).colorScheme.tertiary,
+                                shape: BoxShape.circle,
+                              ),
+                              child: Icon(
+                                _isMusicPlaying ? Icons.pause_rounded : Icons.play_arrow_rounded,
+                                color: Theme.of(context).colorScheme.surface,
+                                size: 20,
+                              ),
+                            ),
+                          ),
+                          const SizedBox(width: 8),
+                          IconButton(
+                            icon: const Icon(Icons.skip_next_rounded),
+                            iconSize: 24,
+                            padding: EdgeInsets.zero,
+                            constraints: const BoxConstraints(),
+                            onPressed: _handleNext,
+                            color: Theme.of(context).colorScheme.tertiary,
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+
               Positioned(
                 left: 16,
-                bottom: 16,
-                child: FloatingActionButton(
-                  backgroundColor: Theme.of(
-                    context,
-                  ).colorScheme.tertiary.withOpacity(0.8),
+                top: MediaQuery.of(context).padding.top + 16,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    if (navSession.isActive)
+                      _buildActiveNavigationUI(
+                        context,
+                        navSession,
+                        gpsProvider,
+                        mapPrefs,
+                      ),
 
-                  onPressed: () {
-                    setState(() {
-                      _followUser = true;
-                    });
-                    _targetZoom = _getZoom(gpsProvider.speed);
-                  },
-
-                  child: const Icon(Icons.my_location, size: 33),
+                    if (!navSession.isActive &&
+                        navSearch.selectedDestination != null)
+                      _buildDestinationCardUI(
+                        context,
+                        navSearch,
+                        navSession,
+                        mapPrefs,
+                      ),
+                  ],
                 ),
               ),
+
+              if (!navSession.isActive)
+                Positioned(
+                  left: 16,
+                  bottom: 16,
+                  child: FloatingActionButton(
+                    heroTag: 'myLocBtn',
+                    backgroundColor: Theme.of(
+                      context,
+                    ).colorScheme.tertiary.withOpacity(0.8),
+                    onPressed: () {
+                      setState(() {
+                        _followUser = true;
+                      });
+                      mapPrefs.setAutoCenterMap(true);
+                      _targetZoom = _getZoom(gpsProvider.speed);
+                    },
+                    child: const Icon(Icons.my_location, size: 28),
+                  ),
+                ),
             ],
           ),
         );
       },
+    );
+  }
+
+  String _formatArrivalTime(double etaSeconds) {
+    final arrival = DateTime.now().add(Duration(seconds: etaSeconds.toInt()));
+    final hour = arrival.hour > 12
+        ? arrival.hour - 12
+        : (arrival.hour == 0 ? 12 : arrival.hour);
+    final amPm = arrival.hour >= 12 ? 'PM' : 'AM';
+    final min = arrival.minute.toString().padLeft(2, '0');
+    return '$hour:$min $amPm';
+  }
+
+  Widget _buildActiveNavigationUI(
+    BuildContext context,
+    NavigationSessionProvider navSession,
+    SpeedProvider gpsProvider,
+    MapSettingsProvider mapPrefs,
+  ) {
+    return Container(
+      width: 240,
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+      decoration: BoxDecoration(
+        color: Theme.of(context).colorScheme.surface,
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.2),
+            blurRadius: 8,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Row(
+            children: [
+              Icon(
+                navSession.currentInstruction?.maneuverType == 'turn'
+                    ? Icons.turn_right
+                    : Icons.straight,
+                size: 28,
+                color: Theme.of(context).colorScheme.primary,
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      navSession.currentInstruction?.instruction ??
+                          'Proceed to route',
+                      style: const TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                      ),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                    Text(
+                      'In ${navSession.currentInstruction?.distanceToManeuver.toStringAsFixed(0) ?? 0} m',
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: Theme.of(
+                          context,
+                        ).colorScheme.inversePrimary.withOpacity(0.7),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              IconButton(
+                icon: const Icon(Icons.close, size: 24),
+                padding: EdgeInsets.zero,
+                constraints: const BoxConstraints(),
+                onPressed: () => navSession.stopNavigation(),
+              ),
+            ],
+          ),
+          const SizedBox(height: 12),
+          const Divider(height: 1),
+          const SizedBox(height: 8),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: [
+              _buildNavStat(
+                context,
+                'Dist',
+                '${(navSession.distanceRemaining / 1000).toStringAsFixed(1)} ${mapPrefs.distanceUnit == 'Kilometers' ? 'km' : 'mi'}',
+              ),
+              _buildNavStat(
+                context,
+                'ETA',
+                '${(navSession.etaSeconds / 60).toStringAsFixed(0)} min',
+              ),
+              _buildNavStat(
+                context,
+                'Arr',
+                _formatArrivalTime(navSession.etaSeconds),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildDestinationCardUI(
+    BuildContext context,
+    NavigationSearchProvider navSearch,
+    NavigationSessionProvider navSession,
+    MapSettingsProvider mapPrefs,
+  ) {
+    return Container(
+      width: 240,
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+      decoration: BoxDecoration(
+        color: Theme.of(context).colorScheme.surface,
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.2),
+            blurRadius: 8,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Row(
+            children: [
+              Expanded(
+                child: Text(
+                  navSearch.selectedDestination!.name,
+                  style: const TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                  ),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
+              IconButton(
+                icon: const Icon(Icons.close, size: 20),
+                padding: EdgeInsets.zero,
+                constraints: const BoxConstraints(),
+                onPressed: () {
+                  navSearch.clearDestination();
+                  setState(() => _followUser = true);
+                },
+              ),
+            ],
+          ),
+          if (navSearch.selectedDestination!.route != null) ...[
+            const SizedBox(height: 8),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: [
+                _buildNavStat(
+                  context,
+                  'Dist',
+                  '${(navSearch.selectedDestination!.route!.totalDistance / 1000).toStringAsFixed(1)} ${mapPrefs.distanceUnit == 'Kilometers' ? 'km' : 'mi'}',
+                ),
+                _buildNavStat(
+                  context,
+                  'ETA',
+                  '${(navSearch.selectedDestination!.route!.totalDuration / 60).toStringAsFixed(0)} min',
+                ),
+              ],
+            ),
+            const SizedBox(height: 12),
+            SizedBox(
+              width: double.infinity,
+              height: 36,
+              child: ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.blue,
+                  foregroundColor: Colors.white,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                ),
+                onPressed: () => navSession.startNavigation(
+                  navSearch.selectedDestination!.route!,
+                ),
+                child: const Text(
+                  'Start',
+                  style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+                ),
+              ),
+            ),
+          ] else ...[
+            const SizedBox(height: 16),
+            const Center(
+              child: SizedBox(
+                width: 20,
+                height: 20,
+                child: CircularProgressIndicator(strokeWidth: 2),
+              ),
+            ),
+            const SizedBox(height: 16),
+          ],
+        ],
+      ),
+    );
+  }
+
+  Widget _buildNavStat(BuildContext context, String label, String value) {
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Text(
+          label,
+          style: TextStyle(
+            fontSize: 10,
+            color: Theme.of(
+              context,
+            ).colorScheme.inversePrimary.withOpacity(0.6),
+          ),
+        ),
+        const SizedBox(height: 2),
+        Text(
+          value,
+          style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+        ),
+      ],
     );
   }
 }
@@ -479,4 +1038,157 @@ double _calculateBearing(LatLng start, LatLng end) {
 
   final brng = math.atan2(y, x) * 180.0 / math.pi;
   return (brng + 360.0) % 360.0;
+}
+
+class _SearchSheet extends StatefulWidget {
+  const _SearchSheet();
+
+  @override
+  State<_SearchSheet> createState() => _SearchSheetState();
+}
+
+class _SearchSheetState extends State<_SearchSheet> {
+  final TextEditingController _controller = TextEditingController();
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final navSearch = context.watch<NavigationSearchProvider>();
+    final cs = Theme.of(context).colorScheme;
+
+    return Padding(
+      padding: const EdgeInsets.all(16.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.end,
+        children: [
+          TextField(
+            controller: _controller,
+            decoration: InputDecoration(
+              hintText: 'Search destination...',
+              prefixIcon: const Icon(Icons.search),
+              suffixIcon: IconButton(
+                icon: const Icon(Icons.clear),
+                onPressed: () {
+                  _controller.clear();
+                  navSearch.search('');
+                },
+              ),
+              filled: true,
+              fillColor: cs.secondary.withOpacity(0.35),
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+                borderSide: BorderSide.none,
+              ),
+            ),
+            onChanged: navSearch.search,
+          ),
+          const SizedBox(height: 16),
+          Expanded(
+            child: navSearch.isLoading
+                ? const Center(child: CircularProgressIndicator())
+                : _controller.text.isEmpty
+                ? _buildRecentSearches(navSearch)
+                : _buildSearchResults(navSearch),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildRecentSearches(NavigationSearchProvider navSearch) {
+    if (navSearch.recentSearches.isEmpty) {
+      return const Center(child: Text('No recent searches'));
+    }
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          'RECENT SEARCHES',
+          style: TextStyle(
+            fontSize: 12,
+            fontWeight: FontWeight.w700,
+            letterSpacing: 1.4,
+            color: Theme.of(
+              context,
+            ).colorScheme.inversePrimary.withOpacity(0.6),
+          ),
+        ),
+        const SizedBox(height: 8),
+        Expanded(
+          child: ListView.builder(
+            itemCount: navSearch.recentSearches.length,
+            itemBuilder: (ctx, i) {
+              final loc = navSearch.recentSearches[i];
+              return ListTile(
+                leading: const Icon(Icons.history),
+                title: Text(
+                  loc.name.isNotEmpty
+                      ? loc.name
+                      : loc.displayName.split(',').first,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
+                subtitle: Text(
+                  loc.displayName,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
+                onTap: () {
+                  navSearch.selectSearchResult(loc);
+                  Navigator.pop(context);
+                  _triggerRouteCalc(context, loc);
+                },
+              );
+            },
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildSearchResults(NavigationSearchProvider navSearch) {
+    if (navSearch.results.isEmpty) {
+      return const Center(child: Text('No results found'));
+    }
+    return ListView.builder(
+      itemCount: navSearch.results.length,
+      itemBuilder: (ctx, i) {
+        final loc = navSearch.results[i];
+        return ListTile(
+          leading: const Icon(Icons.location_on_outlined),
+          title: Text(
+            loc.name.isNotEmpty ? loc.name : loc.displayName.split(',').first,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+          ),
+          subtitle: Text(
+            loc.displayName,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+          ),
+          onTap: () {
+            navSearch.selectSearchResult(loc);
+            Navigator.pop(context);
+            _triggerRouteCalc(context, loc);
+          },
+        );
+      },
+    );
+  }
+
+  void _triggerRouteCalc(BuildContext context, SearchLocation loc) async {
+    final mapState = context.findAncestorStateOfType<_MapPageState>();
+    if (mapState != null) {
+      final dest = DestinationModel(
+        name: loc.name.isNotEmpty ? loc.name : loc.displayName.split(',').first,
+        location: loc.location,
+      );
+      mapState._calculateRouteForDestination(context, dest);
+    }
+  }
 }

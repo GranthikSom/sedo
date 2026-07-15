@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:sedo/pages/first.dart';
+
+import 'package:sedo/pages/homepage.dart';
 import 'package:sedo/service/firebaseauth.dart';
 
 class Auth extends StatelessWidget {
@@ -66,11 +67,11 @@ class Auth extends StatelessWidget {
 
                         if (userCredential != null) {
                           if (!context.mounted) return;
-                          
+
                           Navigator.pushReplacement(
                             context,
                             MaterialPageRoute(
-                              builder: (context) => const firstpage(),
+                              builder: (context) => const Homepage(),
                             ),
                           );
                         } else {

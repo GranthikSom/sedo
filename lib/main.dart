@@ -5,9 +5,12 @@ import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:sedo/firebase_options.dart' show DefaultFirebaseOptions;
 import 'package:sedo/pages/auth.dart';
-import 'package:sedo/pages/first.dart';
+
 import 'package:sedo/pages/homepage.dart' show Homepage;
 import 'package:sedo/service/gps_provider.dart';
+import 'package:sedo/service/map_settings_provider.dart';
+import 'package:sedo/navigation/navigation_session_provider.dart';
+import 'package:sedo/navigation/navigation_search_provider.dart';
 import 'package:sedo/themes/theme_provider.dart';
 import 'package:wakelock_plus/wakelock_plus.dart';
 
@@ -49,6 +52,9 @@ void main() async {
             return gpsProvider;
           },
         ),
+        ChangeNotifierProvider(create: (_) => MapSettingsProvider()),
+        ChangeNotifierProvider(create: (_) => NavigationSessionProvider()),
+        ChangeNotifierProvider(create: (_) => NavigationSearchProvider()),
       ],
       child: const MyApp(),
     ),

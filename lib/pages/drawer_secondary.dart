@@ -3,6 +3,7 @@
 import 'package:flutter/material.dart';
 import 'package:sedo/models/box.dart';
 import 'package:sedo/pages/first.dart' show firstpage;
+import 'package:sedo/pages/homepage.dart' show Homepage;
 
 class DrawerSecondary extends StatelessWidget {
   const DrawerSecondary({super.key});
@@ -16,7 +17,7 @@ class DrawerSecondary extends StatelessWidget {
           Navigator.pop(context);
           Navigator.pushReplacement(
             context,
-            MaterialPageRoute(builder: (context) => firstpage()),
+            MaterialPageRoute(builder: (context) => const Homepage()),
           );
         },
         child: Container(
