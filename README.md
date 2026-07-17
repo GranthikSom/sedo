@@ -66,13 +66,15 @@ Control media playback from supported music applications directly within Sedo.
 
 Sedo is currently in active development and has been tested on real motorcycle rides.
 
+<div align="center">
+<pre>
 #                                       Granthik Som ~ git version 2.50.1 (Apple Git-155)
  ##                                     -------------------------------------------------
   ###                                   Project: sedo (2 branches, 1 tag)
    ######              ###              HEAD: 0fb3926 (main, origin/main)
     #########        #######            Version: v0.1
       ###########  ######O##========-   Created: 5 months ago
-       #####################            Languages:                             
+       #####################            Languages:
          ##################                        ● Dart (89.1 %) ● CMake (3.2 %)
       ###############+++++                         ● Swift (2.7 %) ● Kotlin (2.6 %)
 ###################+++++++                         ● C++ (2.1 %) ● HTML (0.4 %)
@@ -84,9 +86,11 @@ Sedo is currently in active development and has been tested on real motorcycle r
                #########                Churn (15): pubspec.lock 6
                 #######                             pubspec.yaml 6
                  #####                              …/pages/auth.dart 6
+
                                         Lines of code: 5145
                                         Size: 13.07 MiB (135 files)
-                                        
+</pre>
+</div>
                                                                 
 
 ## Roadmap
