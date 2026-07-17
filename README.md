@@ -66,7 +66,6 @@ Control media playback from supported music applications directly within Sedo.
 
 Sedo is currently in active development and has been tested on real motorcycle rides.
 
-<div align="center">
 <pre>
 #                                       Granthik Som ~ git version 2.50.1 (Apple Git-155)
  ##                                     -------------------------------------------------
@@ -89,9 +88,7 @@ Sedo is currently in active development and has been tested on real motorcycle r
 
                                         Lines of code: 5145
                                         Size: 13.07 MiB (135 files)
-</pre>
-</div>
-                                                                
+</pre>                                                
 
 ## Roadmap
 
