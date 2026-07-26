@@ -19,18 +19,24 @@ The project is actively developed and tested in real-world riding conditions, wi
 
 ## Current Features
 
-| Feature                | Status |
-| ---------------------- | ------ |
-| GPS Speedometer        | ✅      |
-| Live Navigation Map    | ✅      |
-| Ride Distance Tracking | ✅      |
-| Average Speed Tracking | ✅      |
-| Maximum Speed Tracking | ✅      |
-| Ride Timer             | ✅      |
-| Dark / Light Themes    | ✅      |
-| Android Media Controls | ✅      |
-| iOS Media Controls     | ✅      |
-| Cross-Platform Support | ✅      |
+| Feature                  | Status |
+| ------------------------ | ------ |
+| GPS Speedometer          | ✅      |
+| Live Navigation Map      | ✅      |
+| Turn-by-Turn Navigation  | ✅      |
+| Destination Search       | ✅      |
+| Route Calculation (OSRM) | ✅      |
+| Snap-to-Road             | ✅      |
+| Auto-Rerouting           | ✅      |
+| Map Tile Caching         | ✅      |
+| Ride Distance Tracking   | ✅      |
+| Average Speed Tracking   | ✅      |
+| Maximum Speed Tracking   | ✅      |
+| Ride Timer               | ✅      |
+| Dark / Light Themes      | ✅      |
+| Android Media Controls   | ✅      |
+| iOS Media Controls       | ✅      |
+| Cross-Platform Support   | ✅      |
 
 ## Key Features
 
@@ -41,6 +47,10 @@ GPS-based speed tracking optimized for motorcycle riding.
 ### Live Navigation Map
 
 Rotating rider-focused map with smooth camera following and automatic zoom adjustments based on speed.
+
+### Turn-by-Turn Navigation
+
+Route calculation via OSRM, live maneuver instructions, ETA and distance remaining, snap-to-road positioning, and automatic rerouting when off-route. Destination search with long-press or search sheet.
 
 ### Ride Statistics
 
@@ -103,6 +113,11 @@ Sedo is currently in active development and has been tested on real motorcycle r
 * [x] Dark / Light Themes
 * [x] Android Media Controls
 * [x] iOS Media Controls
+* [x] Turn-by-Turn Navigation
+* [x] Route Calculation & Rerouting
+* [x] Destination Search
+* [x] Snap-to-Road
+* [x] Map Tile Caching
 
 ### Planned
 
@@ -112,7 +127,6 @@ Sedo is currently in active development and has been tested on real motorcycle r
 * [ ] Ride History
 * [ ] Nearby Fuel Stations
 * [ ] Nearby Repair Shops
-* [ ] Turn-by-Turn Navigation
 * [ ] Bluetooth Helmet Integration
 * [ ] Weather Integration
 
