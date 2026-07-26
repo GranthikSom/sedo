@@ -11,10 +11,12 @@ Unlike traditional motorcycle infotainment systems, Sedo aims to provide essenti
 The project is actively developed and tested in real-world riding conditions, with a focus on usability, reliability, and rider safety.
 
 ---
-| old ui (v0.1) | New ui |
-|-----------|------------|
-<img src="readme_assets/test.gif" alt="Sedo Demo" width="400"> | <img src="readme_assets/Test2.gif" alt="Sedo Demo" width="400"> 
-
+| old ui (v0.1) 
+|-----------|
+<img src="readme_assets/test.gif" alt="Sedo Demo" width="400"> | 
+| New ui |
+|------------|
+<img src="readme_assets/Test2.gif" alt="Sedo Demo" width="400"> 
 ---
 
 ## Current Features
