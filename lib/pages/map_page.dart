@@ -437,8 +437,9 @@ class _MapPageState extends State<MapPage> {
         return Scaffold(
           body: Stack(
             children: [
-              // ponytail: invert-colors overlay for dark mode instead of a separate tile source
-              ColorFiltered(
+              // ponytail: clip the map so the nav marker stays inside the map area
+              ClipRect(
+              child: ColorFiltered(
                 colorFilter: isDark
                     ? const ColorFilter.matrix(<double>[
                         -1,
@@ -602,6 +603,7 @@ class _MapPageState extends State<MapPage> {
                     ),
                   ],
                 ),
+              ),
               ),
 
               if (!navSession.isActive)
