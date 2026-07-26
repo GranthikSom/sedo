@@ -15,7 +15,7 @@ The project is actively developed and tested in real-world riding conditions, wi
 |-----------|
 <img src="readme_assets/test.gif" alt="Sedo Demo" width="400"> | 
 | New ui 
-|------------|
+|       |
 <img src="readme_assets/Test2.gif" alt="Sedo Demo" width="400"> |
 ---
 
