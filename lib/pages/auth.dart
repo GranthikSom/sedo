@@ -62,20 +62,9 @@ class Auth extends StatelessWidget {
                     // Google Sign-In button
                     GestureDetector(
                       onTap: () async {
-                        final userCredential = await AuthService()
-                            .signInWithGoogle();
+                        final userCredential = await AuthService().signInWithGoogle();
 
-                        if (userCredential != null) {
-                          if (!context.mounted) return;
-
-                          Navigator.pushReplacement(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => const Homepage(),
-                            ),
-                          );
-                        } else {
-                          if (!context.mounted) return;
+                        if (userCredential == null && context.mounted) {
                           ScaffoldMessenger.of(context).showSnackBar(
                             SnackBar(
                               content: const Text('Sign in failed'),
