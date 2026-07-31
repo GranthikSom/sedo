@@ -60,7 +60,6 @@ class _MapPageState extends State<MapPage> {
 
   // Music Player State
   final MediaController _mediaController = MediaController();
-  String _musicTitle = '—';
   bool _isMusicPlaying = false;
   bool _showMusicPlayer = false;
   Timer? _musicPollTimer;
@@ -332,7 +331,6 @@ class _MapPageState extends State<MapPage> {
     final info = await _mediaController.nowPlaying();
     if (!mounted) return;
     setState(() {
-      _musicTitle = info['title'] as String? ?? '—';
       bool wasPlaying = _isMusicPlaying;
       _isMusicPlaying = info['isPlaying'] as bool? ?? false;
       if (!wasPlaying && _isMusicPlaying) {
@@ -348,6 +346,11 @@ class _MapPageState extends State<MapPage> {
 
   Future<void> _handleNext() async {
     await _mediaController.next();
+    await _fetchNowPlaying();
+  }
+
+  Future<void> _handlePrevious() async {
+    await _mediaController.previous();
     await _fetchNowPlaying();
   }
 
@@ -655,10 +658,10 @@ class _MapPageState extends State<MapPage> {
                   right: 0,
                   child: Center(
                     child: Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
                       decoration: BoxDecoration(
                         color: Theme.of(context).colorScheme.surface,
-                        borderRadius: BorderRadius.circular(30),
+                        borderRadius: BorderRadius.circular(40),
                         boxShadow: [
                           BoxShadow(color: Colors.black.withOpacity(0.2), blurRadius: 10, offset: const Offset(0, 4)),
                         ],
@@ -666,22 +669,19 @@ class _MapPageState extends State<MapPage> {
                       child: Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          Icon(Icons.music_note, size: 20, color: Theme.of(context).colorScheme.primary),
-                          const SizedBox(width: 8),
-                          ConstrainedBox(
-                            constraints: const BoxConstraints(maxWidth: 120),
-                            child: Text(
-                              _musicTitle,
-                              style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                            ),
+                          IconButton(
+                            icon: const Icon(Icons.skip_previous_rounded),
+                            iconSize: 32,
+                            padding: EdgeInsets.zero,
+                            constraints: const BoxConstraints(),
+                            onPressed: _handlePrevious,
+                            color: Theme.of(context).colorScheme.tertiary,
                           ),
-                          const SizedBox(width: 12),
+                          const SizedBox(width: 24),
                           GestureDetector(
                             onTap: _handlePlayPause,
                             child: Container(
-                              padding: const EdgeInsets.all(6),
+                              padding: const EdgeInsets.all(12),
                               decoration: BoxDecoration(
                                 color: Theme.of(context).colorScheme.tertiary,
                                 shape: BoxShape.circle,
@@ -689,14 +689,14 @@ class _MapPageState extends State<MapPage> {
                               child: Icon(
                                 _isMusicPlaying ? Icons.pause_rounded : Icons.play_arrow_rounded,
                                 color: Theme.of(context).colorScheme.surface,
-                                size: 20,
+                                size: 36,
                               ),
                             ),
                           ),
-                          const SizedBox(width: 8),
+                          const SizedBox(width: 24),
                           IconButton(
                             icon: const Icon(Icons.skip_next_rounded),
-                            iconSize: 24,
+                            iconSize: 32,
                             padding: EdgeInsets.zero,
                             constraints: const BoxConstraints(),
                             onPressed: _handleNext,

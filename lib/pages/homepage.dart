@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:sedo/models/drawer_page.dart';
 import 'package:sedo/pages/map_page.dart';
 import 'package:sedo/pages/speedometer.dart';
-import 'musicplayer_page.dart' show MusicPlayerPage;
 
 class Homepage extends StatefulWidget {
   const Homepage({super.key});
@@ -14,20 +13,6 @@ class Homepage extends StatefulWidget {
 class _HomepageState extends State<Homepage> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
-  int currentIndex = 0;
-
-  void changePage(int index) {
-    setState(() {
-      currentIndex = index;
-    });
-  }
-
-  final List<Widget> pages = [
-    const SpeedometerPage(),
-    const SpeedometerPage(), // ponytail: index 1 kept for drawer parity, remove when drawer indices are fixed
-    const MusicPlayerPage(),
-  ];
-
   @override
   Widget build(BuildContext context) {
     final cs = Theme.of(context).colorScheme;
@@ -37,7 +22,7 @@ class _HomepageState extends State<Homepage> {
       extendBody: true,
       extendBodyBehindAppBar: true,
 
-      drawer: DrawerPage(onItemTap: changePage),
+      drawer: const DrawerPage(),
 
       body: Stack(
         children: [
@@ -68,12 +53,12 @@ class _HomepageState extends State<Homepage> {
             ),
           ),
 
-          // Interactive UI page layer
+          // Speedometer (always visible)
           Positioned.fill(
             child: Row(
               children: [
                 const Expanded(child: SizedBox()),
-                Expanded(child: pages[currentIndex]),
+                const Expanded(child: SpeedometerPage()),
               ],
             ),
           ),
@@ -104,3 +89,4 @@ class _HomepageState extends State<Homepage> {
     );
   }
 }
+

@@ -7,9 +7,7 @@ import 'package:sedo/pages/picture.dart';
 import 'package:sedo/pages/settings.dart';
 
 class DrawerPage extends StatelessWidget {
-  final Function(int) onItemTap;
-
-  const DrawerPage({super.key, required this.onItemTap});
+  const DrawerPage({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -29,27 +27,6 @@ class DrawerPage extends StatelessWidget {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Row(
-                    children: [
-                      _DrawerItem(
-                        icon: Icons.speed,
-                        label: 'Speedo',
-                        onTap: () {
-                          onItemTap(0);
-                          Navigator.pop(context);
-                        },
-                      ),
-                      _DrawerItem(
-                        icon: Icons.music_note,
-                        label: 'Music',
-                        onTap: () {
-                          onItemTap(2);
-                          Navigator.pop(context);
-                        },
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 12),
                   Row(
                     children: [
                       _DrawerItem(
