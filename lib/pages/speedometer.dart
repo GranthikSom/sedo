@@ -108,10 +108,11 @@ class SpeedometerPage extends StatelessWidget {
                     // ── CIRCULAR SPEEDOMETER GAUGE ───────────────────────────
                     Expanded(
                       flex: 12,
-                      child: Center(
-                        child: AspectRatio(
-                          aspectRatio: 1.0,
-                          child: _BlinkingCircularRing(
+                      child: IgnorePointer(
+                        child: Center(
+                          child: AspectRatio(
+                            aspectRatio: 1.0,
+                            child: _BlinkingCircularRing(
                             isOverspeeding: isSpeeding,
                             child: Column(
                               mainAxisAlignment: MainAxisAlignment.center,
@@ -147,6 +148,7 @@ class SpeedometerPage extends StatelessWidget {
                         ),
                       ),
                     ),
+                  ),
 
                     const Spacer(),
                   ],

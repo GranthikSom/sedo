@@ -55,6 +55,7 @@ class _MapPageState extends State<MapPage> {
   double _targetZoom = 18.0;
 
   LatLng? _targetCenter;
+  LatLng? _smoothCameraRider;
   Ticker? _ticker;
 
   // Music Player State
@@ -74,9 +75,15 @@ class _MapPageState extends State<MapPage> {
         return rider;
       }
       // ponytail: rider centered in left map-half (~25% from left edge of full screen)
+      final double dx = w * 0.25;
+      final double dy = -h * 0.20; // Changed from -0.36 to -0.20 to move icon upward
+      final double rad = -camera.rotation * math.pi / 180.0;
+      final double mapDx = dx * math.cos(rad) - dy * math.sin(rad);
+      final double mapDy = dx * math.sin(rad) + dy * math.cos(rad);
+
       final p = camera.projectAtZoom(rider, camera.zoom);
       return camera.unprojectAtZoom(
-        p + Offset(w * 0.25, -h * 0.36),
+        p + Offset(mapDx, mapDy),
         camera.zoom,
       );
     } catch (_) {
@@ -275,37 +282,33 @@ class _MapPageState extends State<MapPage> {
       // Smooth camera follow
       if (_followUser || mapPrefs.autoCenterMap) {
         try {
-          _targetCenter = _offsetCenter(renderLatLng);
-          final currentCameraCenter = _mapController.camera.center;
-
-          double latDiff =
-              (_targetCenter!.latitude - currentCameraCenter.latitude).abs();
-          double lngDiff =
-              (_targetCenter!.longitude - currentCameraCenter.longitude).abs();
-
-          // Apply a threshold (~0.2m) to prevent tiny jittering when stationary
-          if (latDiff > 1.8e-6 || lngDiff > 1.8e-6) {
-            double nextLat =
-                currentCameraCenter.latitude +
-                (_targetCenter!.latitude - currentCameraCenter.latitude) * 0.08;
-            double nextLng =
-                currentCameraCenter.longitude +
-                (_targetCenter!.longitude - currentCameraCenter.longitude) *
-                    0.08;
-
-            double currentZoom = _mapController.camera.zoom;
-            double nextZoom = currentZoom + (_targetZoom - currentZoom) * 0.05;
-            if ((nextZoom - _targetZoom).abs() < 0.01) {
-              nextZoom = _targetZoom;
+          if (_smoothCameraRider == null) {
+            _smoothCameraRider = renderLatLng;
+          } else {
+            double rLatDiff = (renderLatLng.latitude - _smoothCameraRider!.latitude).abs();
+            double rLngDiff = (renderLatLng.longitude - _smoothCameraRider!.longitude).abs();
+            if (rLatDiff > 1.8e-6 || rLngDiff > 1.8e-6) {
+              _smoothCameraRider = LatLng(
+                _smoothCameraRider!.latitude + (renderLatLng.latitude - _smoothCameraRider!.latitude) * 0.08,
+                _smoothCameraRider!.longitude + (renderLatLng.longitude - _smoothCameraRider!.longitude) * 0.08,
+              );
             }
-
-            _mapController.move(LatLng(nextLat, nextLng), nextZoom);
           }
 
           // ponytail: +30° rightward tilt while moving; remove offset for north-up
           if (mapPrefs.rotateMapWithHeading) {
             _mapController.rotate(_smoothHeadingNotifier.value + 30.0);
           }
+
+          _targetCenter = _offsetCenter(_smoothCameraRider!);
+
+          double currentZoom = _mapController.camera.zoom;
+          double nextZoom = currentZoom + (_targetZoom - currentZoom) * 0.05;
+          if ((nextZoom - _targetZoom).abs() < 0.01) {
+            nextZoom = _targetZoom;
+          }
+
+          _mapController.move(_targetCenter!, nextZoom);
         } catch (_) {
           // MapController might not be attached to the Map widget yet
         }
@@ -360,7 +363,15 @@ class _MapPageState extends State<MapPage> {
         padding: EdgeInsets.only(bottom: MediaQuery.of(ctx).viewInsets.bottom),
         child: FractionallySizedBox(
           heightFactor: 0.8,
-          child: const _SearchSheet(),
+          child: _SearchSheet(
+            onSelect: (loc) {
+              final dest = DestinationModel(
+                name: loc.name.isNotEmpty ? loc.name : loc.displayName.split(',').first,
+                location: loc.location,
+              );
+              _calculateRouteForDestination(context, dest);
+            },
+          ),
         ),
       ),
     );
@@ -1043,7 +1054,8 @@ double _calculateBearing(LatLng start, LatLng end) {
 }
 
 class _SearchSheet extends StatefulWidget {
-  const _SearchSheet();
+  final void Function(SearchLocation) onSelect;
+  const _SearchSheet({required this.onSelect});
 
   @override
   State<_SearchSheet> createState() => _SearchSheetState();
@@ -1184,13 +1196,6 @@ class _SearchSheetState extends State<_SearchSheet> {
   }
 
   void _triggerRouteCalc(BuildContext context, SearchLocation loc) async {
-    final mapState = context.findAncestorStateOfType<_MapPageState>();
-    if (mapState != null) {
-      final dest = DestinationModel(
-        name: loc.name.isNotEmpty ? loc.name : loc.displayName.split(',').first,
-        location: loc.location,
-      );
-      mapState._calculateRouteForDestination(context, dest);
-    }
+    widget.onSelect(loc);
   }
 }
