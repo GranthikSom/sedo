@@ -38,21 +38,29 @@ class Auth extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     // Apple Sign-In button
-                    Container(
-                      width: 220,
-                      height: 50,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(12),
-                        color: Colors.white,
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black.withOpacity(0.15),
-                            blurRadius: 8,
-                            offset: const Offset(0, 2),
+                    GestureDetector(
+                      onTap:() {
+                        Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(builder: (context) => const Homepage()),
+                        );
+                      },
+                      child: Container(
+                        width: 220,
+                        height: 50,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(12),
+                          color: Colors.white,
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withOpacity(0.15),
+                              blurRadius: 8,
+                              offset: const Offset(0, 2),
+                            ),
+                          ],
+                          image: const DecorationImage(
+                            image: AssetImage('assets/images/apple.png'),
                           ),
-                        ],
-                        image: const DecorationImage(
-                          image: AssetImage('assets/images/apple.png'),
                         ),
                       ),
                     ),

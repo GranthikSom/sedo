@@ -5,7 +5,6 @@ import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:sedo/firebase_options.dart' show DefaultFirebaseOptions;
 import 'package:sedo/pages/auth.dart';
-
 import 'package:sedo/pages/homepage.dart' show Homepage;
 import 'package:sedo/service/gps_provider.dart';
 import 'package:sedo/service/map_settings_provider.dart';
