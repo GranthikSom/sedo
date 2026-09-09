@@ -140,3 +140,4 @@ Sedo is currently in active development and has been tested on real motorcycle r
 ### Ride Smarter. Ride Safer. Ride with Sedo.
 <!-- commit 1 -->
 <!-- commit 2 -->
+<!-- commit 3 -->
